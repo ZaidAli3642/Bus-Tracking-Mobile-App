@@ -1,6 +1,8 @@
-import { StyleSheet, Image, Text, View } from "react-native";
+import { StyleSheet, Image, Text, View, ScrollView } from "react-native";
 import { KeyboardAvoidingView } from "react-native";
 import * as Yup from "yup";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth, database } from "../firebase/firebaseConfig";
 
 import Screen from "../components/Screen";
 import fonts from "../config/fonts";
@@ -14,52 +16,58 @@ const validationSchema = Yup.object().shape({
 });
 
 const Login = ({ navigation }) => {
+  const login = async (values) => {
+    await signInWithEmailAndPassword(auth, values.email, values.password);
+  };
+
   return (
     <Screen>
-      <KeyboardAvoidingView style={styles.container} behavior="position">
-        <Image
-          source={require("../assets/login.jpg")}
-          style={styles.loginImage}
-        />
-        <Text style={styles.heading}>Login</Text>
-
-        <Form
-          initialValues={{ email: "", password: "" }}
-          validationSchema={validationSchema}
-          onSubmit={(values) => console.log(values)}
-        >
-          <AppTextInput
-            label="Email/CNIC"
-            name="email"
-            autoCorrect={false}
-            autoComplete="email"
-            autoCapitalize="none"
-            textContentType="emailAddress"
-            keyboardType="email-address"
+      <ScrollView>
+        <KeyboardAvoidingView style={styles.container} behavior="position">
+          <Image
+            source={require("../assets/login.jpg")}
+            style={styles.loginImage}
           />
-          <AppTextInput
-            label="Password"
-            name="password"
-            autoCorrect={false}
-            autoComplete="off"
-            autoCapitalize="none"
-            textContentType="password"
-            keyboardType="default"
-            secureTextEntry
-          />
+          <Text style={styles.heading}>Login</Text>
 
-          <SubmitButton title="LOGIN" />
-        </Form>
-        <View style={styles.account}>
-          <AppText>Don't have an account?</AppText>
-          <AppText
-            style={styles.register}
-            onPress={() => navigation.navigate("Register")}
+          <Form
+            initialValues={{ email: "", password: "" }}
+            validationSchema={validationSchema}
+            onSubmit={login}
           >
-            Register
-          </AppText>
-        </View>
-      </KeyboardAvoidingView>
+            <AppTextInput
+              label="Email/CNIC"
+              name="email"
+              autoCorrect={false}
+              autoComplete="email"
+              autoCapitalize="none"
+              textContentType="emailAddress"
+              keyboardType="email-address"
+            />
+            <AppTextInput
+              label="Password"
+              name="password"
+              autoCorrect={false}
+              autoComplete="off"
+              autoCapitalize="none"
+              textContentType="password"
+              keyboardType="default"
+              secureTextEntry
+            />
+            <SubmitButton title="LOGIN" />
+          </Form>
+
+          <View style={styles.account}>
+            <AppText>Don't have an account?</AppText>
+            <AppText
+              style={styles.register}
+              onPress={() => navigation.navigate("Register")}
+            >
+              Register
+            </AppText>
+          </View>
+        </KeyboardAvoidingView>
+      </ScrollView>
     </Screen>
   );
 };
