@@ -6,4 +6,5 @@ export default {
   danger: "#eb1035",
   purple: "#795fcd",
   veryLightBlack: "#f5f5f5",
+  whiteSmoke: "#F8F8F8",
 };

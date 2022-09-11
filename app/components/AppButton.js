@@ -1,14 +1,16 @@
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, View, TouchableHighlight } from "react-native";
 import colors from "../config/colors";
 import fonts from "../config/fonts";
+import Icon from "./Icon";
 
-const AppButton = ({ title, onPress }) => {
+const AppButton = ({ title, onPress, style, IconComponent }) => {
   return (
-    <TouchableOpacity onPress={onPress} activeOpacity={0.9}>
-      <View style={styles.button}>
-        <Text style={styles.text}>{title}</Text>
+    <TouchableHighlight onPress={onPress} underlayColor="white">
+      <View style={[styles.button, style]}>
+        {title && <Text style={styles.text}>{title}</Text>}
+        {IconComponent}
       </View>
-    </TouchableOpacity>
+    </TouchableHighlight>
   );
 };
 const styles = StyleSheet.create({
