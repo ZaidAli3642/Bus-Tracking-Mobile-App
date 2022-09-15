@@ -17,27 +17,86 @@ import { colors } from "../config";
 import Message from "../components/Message";
 import AppButton from "../components/AppButton";
 import Icon from "../components/Icon";
+import { useContext, useEffect, useRef, useState } from "react";
+import AuthContext from "../context/AuthContext";
+import {
+  createChatConversation,
+  createConversation,
+  send,
+} from "../firebase/firebaseCalls/chat";
+import { useConversation } from "../hooks/useConversation";
+import {
+  collection,
+  onSnapshot,
+  orderBy,
+  query,
+  serverTimestamp,
+  where,
+} from "firebase/firestore";
+import { database } from "../firebase/firebaseConfig";
+import Loader from "../components/Loader";
+import AppText from "../components/AppText";
 
-const messages = [
-  {
-    id: 1,
-    message: "Hi This is Zaid Saleem and this is a long string",
-    own: true,
-  },
-  { id: 2, message: "Hi This is Zaid Saleem", own: false },
-  { id: 3, message: "Hi This is Zaid Saleem", own: true },
-  { id: 4, message: "Hi This is Zaid Saleem", own: false },
-  { id: 5, message: "Hi This is Zaid Saleem", own: true },
-  { id: 6, message: "Hi This is Zaid Saleem", own: true },
-  { id: 7, message: "Hi This is Zaid Saleem", own: true },
-  { id: 8, message: "Hi This is Zaid Saleem", own: true },
-  { id: 9, message: "Hi This is Zaid Saleem", own: true },
-  { id: 11, message: "Hi This is Zaid Saleem", own: true },
-  { id: 12, message: "Hi This is Zaid Saleem", own: true },
-  { id: 13, message: "Hi This is Zaid Saleem", own: true },
-];
+const ChatsScreen = ({ navigation, route }) => {
+  const { user } = useContext(AuthContext);
+  const [messages, setMessages] = useState([]);
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+  const textInput = useRef();
+  const {
+    id: receiverId,
+    firstname,
+    lastname,
+    designation,
+  } = route.params.chatPerson;
 
-const ChatsScreen = ({ navigation }) => {
+  const { conversation, requestConversation } =
+    useConversation(createConversation);
+
+  const getPersonChat = () => {
+    setLoading(true);
+    const chatCollections = collection(database, "messages");
+    const q = query(
+      chatCollections,
+      where("conversationId", "==", conversation.conversationId),
+      orderBy("createdAt", "asc")
+    );
+    onSnapshot(q, (chatSnapshot) => {
+      const chats = chatSnapshot.docs.map((chat) => ({
+        id: chat.id,
+        ...chat.data(),
+      }));
+      setMessages(chats);
+    });
+
+    setLoading(false);
+  };
+
+  const sendMessage = async () => {
+    try {
+      const data = {
+        message: message,
+        senderId: user.id,
+        reveiverId: receiverId,
+        conversationId: conversation.conversationId,
+        createdAt: serverTimestamp(),
+      };
+      textInput.current.clear();
+      await send(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    setLoading(true);
+    requestConversation(user, route.params.chatPerson);
+  }, []);
+
+  useEffect(() => {
+    if (conversation.conversationId) getPersonChat();
+  }, [conversation]);
+
   return (
     <Screen>
       <View style={styles.chatHeader}>
@@ -54,25 +113,36 @@ const ChatsScreen = ({ navigation }) => {
         </TouchableOpacity>
         <ListItem
           color={colors.white}
-          image={require("../assets/zaid-saleem-image.jpg")}
-          label="Zaid Saleem"
-          description="Software Engineer"
+          label={`${firstname} ${lastname}`}
+          description={designation}
         />
       </View>
       <Seperator />
-      <FlatList
-        data={messages}
-        keyExtractor={(message) => message.id.toString()}
-        renderItem={({ item }) => (
-          <Message message={item.message} own={item.own} />
-        )}
-      />
+      {loading ? (
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <AppText>Loading</AppText>
+        </View>
+      ) : (
+        <FlatList
+          data={[...messages].reverse()}
+          inverted={true}
+          keyExtractor={(message) => message.id.toString()}
+          renderItem={({ item }) => (
+            <Message message={item.message} own={item.senderId === user.id} />
+          )}
+        />
+      )}
+
       <View style={styles.messageInput}>
         <TextInput
+          ref={textInput}
           style={styles.input}
           underlineColor="transparent"
           activeUnderlineColor="transparent"
           placeholder="Write a message!"
+          onChangeText={(text) => setMessage(text)}
         />
         <AppButton
           style={styles.button}
@@ -84,7 +154,7 @@ const ChatsScreen = ({ navigation }) => {
               size={20}
             />
           }
-          onPress={() => console.log("Pressed")}
+          onPress={sendMessage}
         />
       </View>
     </Screen>

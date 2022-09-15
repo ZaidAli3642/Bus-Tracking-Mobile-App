@@ -70,13 +70,13 @@ const MyProfile = ({ route }) => {
           )}
           ListFooterComponent={() => (
             <>
+              <ListItem label="Update" style={styles.listItem} icon="update" />
               <ListItem
                 label="Logout"
                 style={styles.listItem}
                 icon="logout"
                 onPress={logout}
               />
-              <ListItem label="Update" style={styles.listItem} icon="update" />
             </>
           )}
         />

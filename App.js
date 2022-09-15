@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
+import { StatusBar } from "react-native";
 
 import MainNavigator from "./app/navigation/MainNavigator";
 import AuthNavigator from "./app/navigation/AuthNavigator";

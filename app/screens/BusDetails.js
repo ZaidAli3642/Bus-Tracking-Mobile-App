@@ -67,8 +67,9 @@ const BusDetails = ({ route }) => {
         )}
         ListFooterComponent={() => (
           <>
-            {busRoutes.map((route) => (
+            {busRoutes?.map((route, index) => (
               <ListItem
+                key={index}
                 label={`Latitude     Longitude`}
                 description={`${route.latitude}  ${route.longitude}`}
                 style={styles.listItem}

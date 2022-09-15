@@ -13,7 +13,16 @@ const ListItem = ({
   color,
 }) => {
   const handleLeftProp = (props) => {
-    if (image) return <Image source={image} style={defaultStyles.image} />;
+    if (image || image === "")
+      return (
+        <Image
+          resizeMode="cover"
+          source={
+            image ? { uri: image } : require("../assets/profile-avatar.jpg")
+          }
+          style={defaultStyles.image}
+        />
+      );
     return icon && <List.Icon {...props} icon={icon} />;
   };
 
