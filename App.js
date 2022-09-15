@@ -1,14 +1,28 @@
+import { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
+import { StatusBar } from "react-native";
+
 import MainNavigator from "./app/navigation/MainNavigator";
 import AuthNavigator from "./app/navigation/AuthNavigator";
-import { useAuth } from "./app/context/AuthContext";
+import AuthContext from "./app/context/AuthContext";
 import useAppFonts from "./app/hooks/useAppFonts";
-import { colors } from "./app/config";
 import myTheme from "./app/theme/theme";
+import { getSession } from "./app/storage/storeSession";
 
 export default function App() {
-  const { user, setUser, AuthContext, appIsReady } = useAuth();
+  const [user, setUser] = useState(null);
+  const [appIsReady, setAppIsReady] = useState(false);
   const { fontsLoaded } = useAppFonts();
+
+  const getUserSession = async () => {
+    const userSession = await getSession();
+    setUser(userSession);
+    setAppIsReady(true);
+  };
+
+  useEffect(() => {
+    getUserSession();
+  }, []);
 
   if (!appIsReady || !fontsLoaded) return null;
 

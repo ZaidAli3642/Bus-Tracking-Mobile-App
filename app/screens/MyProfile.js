@@ -1,27 +1,39 @@
-import { StyleSheet, Image, Text, View } from "react-native";
+import { StyleSheet, Image, View, FlatList } from "react-native";
 import AppText from "../components/AppText";
-import { signOut } from "firebase/auth";
-import { auth } from "../firebase/firebaseConfig";
 
 import Screen from "../components/Screen";
 import Seperator from "../components/Seperator";
 import { colors, fonts } from "../config";
 import ListItem from "../components/ListItem";
-import AppButton from "../components/AppButton";
-import { FlatList } from "react-native-gesture-handler";
+import AuthContext from "../context/AuthContext";
+import { useContext } from "react";
+import { removeSession } from "../storage/storeSession";
 
 const MyProfile = ({ route }) => {
-  const { image, firstname, lastname, email, contact, institute, password } =
-    route.params.user;
+  const { setUser } = useContext(AuthContext);
+
+  const {
+    image,
+    firstname,
+    lastname,
+    fullName,
+    email,
+    nationalIdentityNumber,
+    contact,
+    parentcontact,
+    institute,
+    password,
+  } = route.params.user;
 
   const userDetails = [
-    { id: 1, info: email, icon: "email" },
+    { id: 1, info: nationalIdentityNumber, icon: "id-card" },
     { id: 2, info: password, icon: "lock" },
-    { id: 3, info: contact, icon: "cellphone" },
+    { id: 3, info: parentcontact, icon: "cellphone" },
   ];
 
   const logout = async () => {
-    await signOut(auth);
+    setUser(null);
+    await removeSession();
   };
   return (
     <Screen>
@@ -38,9 +50,9 @@ const MyProfile = ({ route }) => {
                       : require("../assets/zaid-saleem-image.jpg")
                   }
                 />
-                <AppText
-                  style={styles.name}
-                >{`${firstname} ${lastname}`}</AppText>
+                <AppText style={styles.name}>
+                  {fullName ? fullName : `${firstname} ${lastname}`}
+                </AppText>
                 <AppText style={styles.address}>{institute}</AppText>
               </View>
               <Seperator />
@@ -58,13 +70,13 @@ const MyProfile = ({ route }) => {
           )}
           ListFooterComponent={() => (
             <>
+              <ListItem label="Update" style={styles.listItem} icon="update" />
               <ListItem
                 label="Logout"
                 style={styles.listItem}
                 icon="logout"
                 onPress={logout}
               />
-              <ListItem label="Update" style={styles.listItem} icon="update" />
             </>
           )}
         />

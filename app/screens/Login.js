@@ -1,23 +1,43 @@
 import { StyleSheet, Image, Text, View, ScrollView } from "react-native";
 import { KeyboardAvoidingView } from "react-native";
 import * as Yup from "yup";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth, database } from "../firebase/firebaseConfig";
+import { database } from "../firebase/firebaseConfig";
 
 import Screen from "../components/Screen";
 import fonts from "../config/fonts";
 import colors from "../config/colors";
 import AppText from "../components/AppText";
 import { AppTextInput, Form, SubmitButton } from "../components/Form";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { useContext } from "react";
+import AuthContext from "../context/AuthContext";
+import * as storage from "../storage/storeSession";
 
 const validationSchema = Yup.object().shape({
-  email: Yup.string().email().required().label("Email"),
+  nationalIdentityNumber: Yup.string().required().label("National Id"),
   password: Yup.string().min(8).max(12).required().label("Password"),
 });
 
 const Login = ({ navigation }) => {
+  const { setUser } = useContext(AuthContext);
+
   const login = async (values) => {
-    await signInWithEmailAndPassword(auth, values.email, values.password);
+    const nationalIdentityNumber = parseInt(values.nationalIdentityNumber);
+    const password = parseInt(values.password);
+    const userCollection = collection(database, "parent");
+    const q = query(
+      userCollection,
+      where("nationalIdentityNumber", "==", nationalIdentityNumber),
+      where("password", "==", password)
+    );
+    const userSnapshot = await getDocs(q);
+
+    const user = userSnapshot.docs.map((user) => ({
+      id: user.id,
+      ...user.data(),
+    }));
+    storage.saveSession(user[0]);
+    setUser(user[0]);
   };
 
   return (
@@ -31,18 +51,18 @@ const Login = ({ navigation }) => {
           <Text style={styles.heading}>Login</Text>
 
           <Form
-            initialValues={{ email: "", password: "" }}
+            initialValues={{ nationalIdentityNumber: "", password: "" }}
             validationSchema={validationSchema}
             onSubmit={login}
           >
             <AppTextInput
-              label="Email/CNIC"
-              name="email"
+              label="National Identity Number"
+              name="nationalIdentityNumber"
               autoCorrect={false}
-              autoComplete="email"
+              autoComplete="off"
               autoCapitalize="none"
-              textContentType="emailAddress"
-              keyboardType="email-address"
+              textContentType="none"
+              keyboardType="default"
             />
             <AppTextInput
               label="Password"

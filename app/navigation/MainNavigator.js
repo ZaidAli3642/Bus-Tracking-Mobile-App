@@ -16,7 +16,6 @@ const Stack = createStackNavigator();
 const MainNavigator = () => (
   <Stack.Navigator
     screenOptions={{
-      headerTitle: "Bus Tracking App",
       headerTitleStyle: { color: colors.purple },
       gestureEnabled: true,
       gestureDirection: "horizontal",
@@ -25,7 +24,11 @@ const MainNavigator = () => (
       cardStyle: { elevation: 5 },
     }}
   >
-    <Stack.Screen name="App" component={AppNavigator} />
+    <Stack.Screen
+      name="App"
+      component={AppNavigator}
+      options={{ headerShown: false }}
+    />
     <Stack.Screen
       name="Chat"
       component={ChatsScreen}

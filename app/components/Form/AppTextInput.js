@@ -19,6 +19,7 @@ const AppTextInput = ({ label, name, ...otherProps }) => {
         // autoCapitalize="none"
         // textContentType="emailAddress"
         // keyboardType="email-address"
+
         style={styles.input}
       />
       <ErrorMessage error={errors[name]} />

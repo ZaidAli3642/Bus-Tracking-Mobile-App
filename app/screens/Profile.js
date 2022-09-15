@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { StyleSheet, Image, FlatList, View } from "react-native";
 
 import AppText from "../components/AppText";
@@ -6,7 +6,7 @@ import Screen from "../components/Screen";
 import { colors, fonts } from "../config";
 import ListItem from "../components/ListItem";
 import Seperator from "../components/Seperator";
-import { useAuth } from "../context/AuthContext";
+import AuthContext, { useAuth } from "../context/AuthContext";
 import Loader from "../components/Loader";
 import { getSpecificParent } from "../firebase/firebaseCalls/parent";
 import { useApi } from "../hooks/useApi";
@@ -43,27 +43,28 @@ const profiles = [
 ];
 
 const Profile = ({ navigation }) => {
-  const { data, loading, request } = useApi(getSpecificParent);
-  const { user } = useAuth();
-
-  useEffect(() => {
-    if (!user) return;
-    request(user);
-  }, [user]);
-
-  if (loading) return <Loader />;
+  const { user } = useContext(AuthContext);
 
   return (
     <>
       <Screen>
         <AppText style={styles.heading}>Menu</AppText>
         <View style={styles.personal}>
-          <Image source={{ uri: data.image }} style={styles.image} />
+          <Image
+            source={
+              user.image
+                ? { uri: user.image }
+                : require("../assets/zaid-saleem-image.jpg")
+            }
+            style={styles.image}
+          />
           <View>
-            <AppText
-              style={styles.name}
-            >{`${data.firstname} ${data.lastname}`}</AppText>
-            <AppText style={styles.address}>{data.institute}</AppText>
+            <AppText style={styles.name}>
+              {user.fullName
+                ? user.fullName
+                : `${user.firstname} ${user.lastname}`}
+            </AppText>
+            <AppText style={styles.address}>{user.institute}</AppText>
           </View>
         </View>
 
@@ -76,7 +77,7 @@ const Profile = ({ navigation }) => {
               icon={item.icon}
               label={item.label}
               rightIcon={item.rightIcon}
-              onPress={() => navigation.navigate(item.target, { user: data })}
+              onPress={() => navigation.navigate(item.target, { user: user })}
             />
           )}
           ItemSeparatorComponent={Seperator}
