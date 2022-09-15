@@ -3,7 +3,6 @@ import { FlatList, Image, StyleSheet, View } from "react-native";
 
 import AppText from "../components/AppText";
 import ListItem from "../components/ListItem";
-import Screen from "../components/Screen";
 import Seperator from "../components/Seperator";
 import Loader from "../components/Loader";
 import { colors, fonts } from "../config";
@@ -14,16 +13,39 @@ const StudentProfile = ({ route }) => {
   const { user } = route.params;
   const { data, loading, request } = useApi(getSpecificStudent);
 
-  const { firstname, lastname, image, institute } = data;
+  const {
+    firstname,
+    lastname,
+    parent,
+    parentcontact,
+    contact,
+    address,
+    city,
+    postalcode,
+    rollNo,
+    busNo,
+    image,
+    institute,
+  } = data[0] || {};
   const userDetails = [
-    { id: 1, info: data.parent, icon: "account-child" },
-    { id: 2, info: data.parentcontact, icon: "cellphone" },
-    { id: 3, info: data.contact, icon: "cellphone" },
-    { id: 4, info: data.address, icon: "map-marker" },
-    { id: 5, info: data.city, icon: "city" },
-    { id: 6, info: data.postalcode, icon: "post" },
-    { id: 7, info: data.rollNo, icon: "numeric" },
-    { id: 8, info: data.busNo, icon: "bus" },
+    {
+      id: 1,
+      info: parent,
+      icon: "account-child",
+      label: "Parent/Guardian Name",
+    },
+    {
+      id: 2,
+      info: parentcontact,
+      icon: "cellphone",
+      label: "Parent/Guardian Contact",
+    },
+    { id: 3, info: contact, icon: "cellphone", label: "Contact" },
+    { id: 4, info: address, icon: "map-marker", label: "Address" },
+    { id: 5, info: city, icon: "city", label: "City" },
+    { id: 6, info: postalcode, icon: "post", label: "Postal Code" },
+    { id: 7, info: rollNo, icon: "numeric", label: "Roll No" },
+    { id: 8, info: busNo, icon: "bus", label: "Bus No" },
   ];
 
   useEffect(() => {
@@ -32,41 +54,41 @@ const StudentProfile = ({ route }) => {
 
   if (loading) return <Loader />;
   return (
-    <Screen>
-      <View style={styles.container}>
-        <FlatList
-          ListHeaderComponent={
-            <>
-              <View style={styles.imageAndDetails}>
-                <Image
-                  style={styles.image}
-                  source={
-                    image
-                      ? { uri: image }
-                      : require("../assets/zaid-saleem-image.jpg")
-                  }
-                />
-                <AppText
-                  style={styles.name}
-                >{`${firstname} ${lastname}`}</AppText>
-                <AppText style={styles.address}>{institute}</AppText>
-              </View>
-              <Seperator />
-              <AppText style={styles.heading}>Personal Information</AppText>
-            </>
-          }
-          data={userDetails}
-          keyExtractor={(user) => user.id.toString()}
-          renderItem={({ item }) => (
-            <ListItem
-              label={item.info}
-              icon={item.icon}
-              style={styles.listItem}
-            />
-          )}
-        />
-      </View>
-    </Screen>
+    <View style={styles.container}>
+      <FlatList
+        style={{ flex: 1, paddingHorizontal: 20 }}
+        ListHeaderComponent={
+          <>
+            <View style={styles.imageAndDetails}>
+              <Image
+                style={styles.image}
+                source={
+                  image
+                    ? { uri: image }
+                    : require("../assets/zaid-saleem-image.jpg")
+                }
+              />
+              <AppText
+                style={styles.name}
+              >{`${firstname} ${lastname}`}</AppText>
+              <AppText style={styles.address}>{institute}</AppText>
+            </View>
+            <Seperator />
+            <AppText style={styles.heading}>Personal Information</AppText>
+          </>
+        }
+        data={userDetails}
+        keyExtractor={(user) => user.id.toString()}
+        renderItem={({ item }) => (
+          <ListItem
+            description={item.info}
+            label={item.label}
+            icon={item.icon}
+            style={styles.listItem}
+          />
+        )}
+      />
+    </View>
   );
 };
 
@@ -78,17 +100,8 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    paddingHorizontal: 20,
   },
-  detail: {
-    fontSize: 20,
-    marginLeft: 20,
-  },
-  detailItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    margin: 20,
-  },
+
   heading: {
     fontSize: 27,
     marginTop: 5,
