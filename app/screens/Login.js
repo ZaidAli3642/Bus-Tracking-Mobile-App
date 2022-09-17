@@ -15,7 +15,7 @@ import * as storage from "../storage/storeSession";
 
 const validationSchema = Yup.object().shape({
   nationalIdentityNumber: Yup.string().required().label("National Id"),
-  password: Yup.string().min(8).max(12).required().label("Password"),
+  password: Yup.string().required().label("Password"),
 });
 
 const Login = ({ navigation }) => {

@@ -8,7 +8,7 @@ export const useApi = (apiFunc) => {
     setLoading(true);
 
     const result = await apiFunc(...args);
-    console.log(result);
+
     setData(result);
     setLoading(false);
   };
