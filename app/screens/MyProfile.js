@@ -9,26 +9,36 @@ import AuthContext from "../context/AuthContext";
 import { useContext } from "react";
 import { removeSession } from "../storage/storeSession";
 
-const MyProfile = ({ route }) => {
+const MyProfile = ({ navigation }) => {
   const { setUser } = useContext(AuthContext);
+
+  const { user } = useContext(AuthContext);
 
   const {
     image,
     firstname,
     lastname,
     fullName,
-    email,
     nationalIdentityNumber,
-    contact,
     parentcontact,
     institute,
     password,
-  } = route.params.user;
+  } = user;
 
   const userDetails = [
-    { id: 1, info: nationalIdentityNumber, icon: "id-card" },
-    { id: 2, info: password, icon: "lock" },
-    { id: 3, info: parentcontact, icon: "cellphone" },
+    {
+      id: 1,
+      info: nationalIdentityNumber,
+      icon: "id-card",
+      label: "National ID Number",
+    },
+    { id: 2, info: password, icon: "lock", label: "Password" },
+    {
+      id: 3,
+      info: parentcontact,
+      icon: "cellphone",
+      parentContact: "Parent Contact",
+    },
   ];
 
   const logout = async () => {
@@ -63,14 +73,20 @@ const MyProfile = ({ route }) => {
           keyExtractor={(user) => user.id.toString()}
           renderItem={({ item }) => (
             <ListItem
-              label={item.info}
+              label={item.label}
+              description={item.info}
               icon={item.icon}
               style={styles.listItem}
             />
           )}
           ListFooterComponent={() => (
             <>
-              <ListItem label="Update" style={styles.listItem} icon="update" />
+              <ListItem
+                label="Update"
+                style={styles.listItem}
+                icon="update"
+                onPress={() => navigation.navigate("Update")}
+              />
               <ListItem
                 label="Logout"
                 style={styles.listItem}

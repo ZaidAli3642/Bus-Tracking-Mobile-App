@@ -67,6 +67,7 @@ const Maps = () => {
         <MapViewDirections
           strokeWidth={3}
           strokeColor="red"
+          mode="DRIVING"
           onReady={(result) =>
             mapViewRef.current.fitToCoordinates(result.coordinates, {
               edgePadding: {

@@ -22,8 +22,8 @@ const Login = ({ navigation }) => {
   const { setUser } = useContext(AuthContext);
 
   const login = async (values) => {
-    const nationalIdentityNumber = parseInt(values.nationalIdentityNumber);
-    const password = parseInt(values.password);
+    const nationalIdentityNumber = Number(values.nationalIdentityNumber);
+    const password = values.password;
     const userCollection = collection(database, "parent");
     const q = query(
       userCollection,
@@ -36,7 +36,8 @@ const Login = ({ navigation }) => {
       id: user.id,
       ...user.data(),
     }));
-    storage.saveSession(user[0]);
+    console.log(user);
+    await storage.saveSession(user[0]);
     setUser(user[0]);
   };
 
@@ -76,16 +77,6 @@ const Login = ({ navigation }) => {
             />
             <SubmitButton title="LOGIN" />
           </Form>
-
-          <View style={styles.account}>
-            <AppText>Don't have an account?</AppText>
-            <AppText
-              style={styles.register}
-              onPress={() => navigation.navigate("Register")}
-            >
-              Register
-            </AppText>
-          </View>
         </KeyboardAvoidingView>
       </ScrollView>
     </Screen>
