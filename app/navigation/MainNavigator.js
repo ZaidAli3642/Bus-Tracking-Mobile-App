@@ -9,6 +9,7 @@ import ChatsScreen from "../screens/ChatsScreen";
 import DriverProfile from "../screens/DriverProfile";
 import MyProfile from "../screens/MyProfile";
 import StudentProfile from "../screens/StudentProfile";
+import UpdateInformation from "../screens/UpdateInformation";
 import AppNavigator from "./AppNavigator";
 
 const Stack = createStackNavigator();
@@ -41,6 +42,7 @@ const MainNavigator = () => (
     <Stack.Screen name="StudentProfile" component={StudentProfile} />
     <Stack.Screen name="DriverProfile" component={DriverProfile} />
     <Stack.Screen name="BusDetails" component={BusDetails} />
+    <Stack.Screen name="Update" component={UpdateInformation} />
   </Stack.Navigator>
 );
 

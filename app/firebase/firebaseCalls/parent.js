@@ -1,5 +1,15 @@
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { database } from "../firebaseConfig";
+import {
+  collection,
+  doc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
+import * as ImagePicker from "expo-image-picker";
+
+import { database, storage } from "../firebaseConfig";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 export const getSpecificParent = async (user) => {
   const parentRef = collection(database, "parent");
@@ -11,4 +21,57 @@ export const getSpecificParent = async (user) => {
   }));
 
   return parent;
+};
+
+export const uploadProfileImage = async (image) => {
+  try {
+    const imageName = new Date().valueOf();
+
+    const imageRef = ref(storage, "parent/" + imageName);
+
+    const response = await fetch(image.uri);
+    const blob = await response.blob();
+
+    const uploadTask = await uploadBytes(imageRef, blob);
+
+    const downloadedURL = await getDownloadURL(uploadTask.ref);
+
+    return downloadedURL;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+};
+
+export const selectImage = async () => {
+  const permission = await ImagePicker.getMediaLibraryPermissionsAsync();
+
+  if (permission.granted === false) {
+    const requestPermission =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (requestPermission.status === "denied") return;
+  }
+
+  const result = await ImagePicker.launchImageLibraryAsync({
+    allowsEditing: true,
+    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+  });
+
+  if (result.cancelled) return;
+
+  const uploadResult = await uploadProfileImage(result);
+
+  if (uploadBytes === false) return;
+
+  return uploadResult;
+};
+
+export const updateData = async (updatedUser, collectionName, id) => {
+  try {
+    const docRef = doc(database, collectionName, id);
+    await updateDoc(docRef, updatedUser);
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
 };

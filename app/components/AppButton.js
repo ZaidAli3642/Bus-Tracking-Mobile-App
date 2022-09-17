@@ -3,11 +3,11 @@ import colors from "../config/colors";
 import fonts from "../config/fonts";
 import Icon from "./Icon";
 
-const AppButton = ({ title, onPress, style, IconComponent }) => {
+const AppButton = ({ title, onPress, style, titleStyles, IconComponent }) => {
   return (
     <TouchableHighlight onPress={onPress} underlayColor="white">
       <View style={[styles.button, style]}>
-        {title && <Text style={styles.text}>{title}</Text>}
+        {title && <Text style={[styles.text, titleStyles]}>{title}</Text>}
         {IconComponent}
       </View>
     </TouchableHighlight>
