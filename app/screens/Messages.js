@@ -83,7 +83,6 @@ const Messages = ({ navigation }) => {
 
   return (
     <>
-      <StatusBar backgroundColor="black" />
       <Screen>
         <AppText style={[defaultStyles.heading, styles.heading]}>
           Messages
