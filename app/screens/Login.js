@@ -1,4 +1,11 @@
-import { StyleSheet, Image, Text, View, ScrollView } from "react-native";
+import {
+  StyleSheet,
+  Image,
+  Text,
+  View,
+  ScrollView,
+  ToastAndroid,
+} from "react-native";
 import { KeyboardAvoidingView } from "react-native";
 import * as Yup from "yup";
 import { database } from "../firebase/firebaseConfig";
@@ -22,13 +29,11 @@ const Login = ({ navigation }) => {
   const { setUser } = useContext(AuthContext);
 
   const login = async (values) => {
-    const nationalIdentityNumber = Number(values.nationalIdentityNumber);
-    const password = values.password;
     const userCollection = collection(database, "parent");
     const q = query(
       userCollection,
-      where("nationalIdentityNumber", "==", nationalIdentityNumber),
-      where("password", "==", password)
+      where("nationalIdentityNumber", "==", values.nationalIdentityNumber),
+      where("password", "==", values.password)
     );
     const userSnapshot = await getDocs(q);
 
@@ -36,7 +41,10 @@ const Login = ({ navigation }) => {
       id: user.id,
       ...user.data(),
     }));
-    console.log(user);
+
+    if (user.length === 0)
+      return ToastAndroid.show("Invalid Id or Password.", ToastAndroid.SHORT);
+
     await storage.saveSession(user[0]);
     setUser(user[0]);
   };
