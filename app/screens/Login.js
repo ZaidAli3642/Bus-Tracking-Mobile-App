@@ -1,52 +1,30 @@
-import {
-  StyleSheet,
-  Image,
-  Text,
-  View,
-  ScrollView,
-  ToastAndroid,
-} from "react-native";
+import { StyleSheet, Image, Text, ScrollView } from "react-native";
 import { KeyboardAvoidingView } from "react-native";
 import * as Yup from "yup";
-import { database } from "../firebase/firebaseConfig";
 
 import Screen from "../components/Screen";
 import fonts from "../config/fonts";
 import colors from "../config/colors";
-import AppText from "../components/AppText";
 import { AppTextInput, Form, SubmitButton } from "../components/Form";
-import { collection, getDocs, query, where } from "firebase/firestore";
 import { useContext } from "react";
 import AuthContext from "../context/AuthContext";
 import * as storage from "../storage/storeSession";
+import { handleParentlogin } from "../firebase/firebaseCalls/auth";
 
 const validationSchema = Yup.object().shape({
   nationalIdentityNumber: Yup.string().required().label("National Id"),
   password: Yup.string().required().label("Password"),
 });
 
-const Login = ({ navigation }) => {
+const Login = ({ route }) => {
   const { setUser } = useContext(AuthContext);
 
+  const { loginUser } = route.params;
+
   const login = async (values) => {
-    const userCollection = collection(database, "parent");
-    const q = query(
-      userCollection,
-      where("nationalIdentityNumber", "==", values.nationalIdentityNumber),
-      where("password", "==", values.password)
-    );
-    const userSnapshot = await getDocs(q);
-
-    const user = userSnapshot.docs.map((user) => ({
-      id: user.id,
-      ...user.data(),
-    }));
-
-    if (user.length === 0)
-      return ToastAndroid.show("Invalid Id or Password.", ToastAndroid.SHORT);
-
-    await storage.saveSession(user[0]);
-    setUser(user[0]);
+    const user = await handleParentlogin(values, loginUser);
+    await storage.saveSession(user);
+    setUser(user);
   };
 
   return (

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import { StatusBar } from "react-native";
 
 import MainNavigator from "./app/navigation/MainNavigator";
 import AuthNavigator from "./app/navigation/AuthNavigator";
@@ -8,6 +7,8 @@ import AuthContext from "./app/context/AuthContext";
 import useAppFonts from "./app/hooks/useAppFonts";
 import myTheme from "./app/theme/theme";
 import { getSession } from "./app/storage/storeSession";
+import ImageViewScreen from "./app/screens/ImageViewScreen";
+import { StatusBar } from "expo-status-bar";
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -28,6 +29,7 @@ export default function App() {
 
   return (
     <>
+      <StatusBar style="auto" />
       <AuthContext.Provider value={{ user, setUser }}>
         <NavigationContainer theme={myTheme}>
           {user ? <MainNavigator /> : <AuthNavigator />}

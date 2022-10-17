@@ -1,6 +1,9 @@
-import { createStackNavigator } from "@react-navigation/stack";
+import {
+  CardStyleInterpolators,
+  createStackNavigator,
+} from "@react-navigation/stack";
+import HomeScreen from "../screens/HomeScreen";
 import Login from "../screens/Login";
-import Register from "../screens/Register";
 
 const Stack = createStackNavigator();
 
@@ -9,11 +12,15 @@ const AuthNavigator = () => (
     screenOptions={{
       headerShown: false,
       animationDuration: 10,
-      animation: "slide_from_bottom",
+      gestureEnabled: true,
+      gestureDirection: "horizontal",
+      cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+      cardShadowEnabled: true,
+      cardStyle: { elevation: 5 },
     }}
   >
+    <Stack.Screen name="Welcome" component={HomeScreen} />
     <Stack.Screen name="Login" component={Login} />
-    {/* <Stack.Screen name="Register" component={Register} /> */}
   </Stack.Navigator>
 );
 

@@ -2,7 +2,7 @@ import { useState } from "react";
 
 export const useApi = (apiFunc) => {
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState({});
+  const [data, setData] = useState([]);
 
   const request = async (...args) => {
     setLoading(true);

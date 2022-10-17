@@ -6,11 +6,12 @@ import {
 import { colors } from "../config";
 import BusDetails from "../screens/BusDetails";
 import ChatsScreen from "../screens/ChatsScreen";
-import DriverProfile from "../screens/DriverProfile";
+import DriverProfile from "../screens/Parent/DriverProfile";
 import MyProfile from "../screens/MyProfile";
-import StudentProfile from "../screens/StudentProfile";
 import UpdateInformation from "../screens/UpdateInformation";
 import AppNavigator from "./AppNavigator";
+import StudentsListScreen from "../screens/Driver/StudentsListScreen";
+import ShowStudentProfile from "../screens/ShowStudentProfile";
 
 const Stack = createStackNavigator();
 
@@ -39,7 +40,8 @@ const MainNavigator = () => (
     />
 
     <Stack.Screen name="MyProfile" component={MyProfile} />
-    <Stack.Screen name="StudentProfile" component={StudentProfile} />
+    <Stack.Screen name="StudentProfile" component={ShowStudentProfile} />
+    <Stack.Screen name="StudentList" component={StudentsListScreen} />
     <Stack.Screen name="DriverProfile" component={DriverProfile} />
     <Stack.Screen name="BusDetails" component={BusDetails} />
     <Stack.Screen name="Update" component={UpdateInformation} />

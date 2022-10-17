@@ -4,23 +4,28 @@ import {
   Image,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from "react-native";
 
 import React, { useEffect } from "react";
-import Loader from "../components/Loader";
-import AppText from "../components/AppText";
-import Seperator from "../components/Seperator";
-import ListItem from "../components/ListItem";
-import { colors, fonts } from "../config";
-import { useApi } from "../hooks/useApi";
-import { getDriverDetails } from "../firebase/firebaseCalls/driver";
+import Loader from "../../components/Loader";
+import AppText from "../../components/AppText";
+import Seperator from "../../components/Seperator";
+import ListItem from "../../components/ListItem";
+import { colors, fonts } from "../../config";
+import { useApi } from "../../hooks/useApi";
+import { getDriverDetails } from "../../firebase/firebaseCalls/driver";
+import { useVisible } from "../../hooks/useVisible";
+import { useImage } from "../../hooks/useImage";
+import ImageViewScreen from "../ImageViewScreen";
 
 const DriverProfile = ({ route }) => {
   const { user } = route.params;
+  const { visible, show, hide } = useVisible();
+  const { imageUri, imageSet } = useImage();
 
   const { data, loading, request } = useApi(getDriverDetails);
-  console.log(data);
   const {
     firstname,
     lastname,
@@ -64,14 +69,22 @@ const DriverProfile = ({ route }) => {
         ListHeaderComponent={
           <>
             <View style={styles.imageAndDetails}>
-              <Image
-                style={styles.image}
-                source={
-                  image
-                    ? { uri: image }
-                    : require("../assets/zaid-saleem-image.jpg")
-                }
-              />
+              <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={() => {
+                  show();
+                  imageSet(image);
+                }}
+              >
+                <Image
+                  style={styles.image}
+                  source={
+                    image
+                      ? { uri: image }
+                      : require("../../assets/zaid-saleem-image.jpg")
+                  }
+                />
+              </TouchableOpacity>
               <AppText
                 style={styles.name}
               >{`${firstname} ${lastname}`}</AppText>
@@ -94,21 +107,38 @@ const DriverProfile = ({ route }) => {
           <>
             <View style={{ marginHorizontal: 15, marginVertical: 15 }}>
               <AppText>License Image</AppText>
-              <Image
-                source={{ uri: licenseImage }}
-                style={styles.squareImage}
-              />
+              <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={() => {
+                  show();
+                  imageSet(licenseImage);
+                }}
+              >
+                <Image
+                  source={{ uri: licenseImage }}
+                  style={styles.squareImage}
+                />
+              </TouchableOpacity>
             </View>
             <View style={{ marginHorizontal: 15, marginVertical: 10 }}>
               <AppText>Medical Report Image</AppText>
-              <Image
-                source={{ uri: medicalReport }}
-                style={styles.squareImage}
-              />
+              <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={() => {
+                  show();
+                  imageSet(medicalReport);
+                }}
+              >
+                <Image
+                  source={{ uri: medicalReport }}
+                  style={styles.squareImage}
+                />
+              </TouchableOpacity>
             </View>
           </>
         )}
       />
+      <ImageViewScreen hideModal={hide} imageUri={imageUri} visible={visible} />
     </View>
   );
 };

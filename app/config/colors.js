@@ -7,4 +7,5 @@ export default {
   purple: "#795fcd",
   veryLightBlack: "#f5f5f5",
   whiteSmoke: "#F8F8F8",
+  black: "#000000",
 };
