@@ -12,3 +12,15 @@ export const getSpecificStudent = async (user) => {
   console.log(student);
   return student;
 };
+
+export const getStudents = async (user) => {
+  const studentRef = collection(database, "students");
+
+  const studentSnapshot = await getDocs(studentRef);
+  const student = studentSnapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  }));
+
+  return student;
+};

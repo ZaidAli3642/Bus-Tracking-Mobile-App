@@ -1,4 +1,11 @@
-import { Dimensions, FlatList, Image, StyleSheet, View } from "react-native";
+import {
+  Dimensions,
+  FlatList,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import React, { useEffect } from "react";
 import { colors, fonts } from "../config";
 import AppText from "../components/AppText";
@@ -7,10 +14,16 @@ import Seperator from "../components/Seperator";
 import { useApi } from "../hooks/useApi";
 import { getBusDetails } from "../firebase/firebaseCalls/bus";
 import Loader from "../components/Loader";
+import { useVisible } from "../hooks/useVisible";
+import { useImage } from "../hooks/useImage";
+import Screen from "../components/Screen";
+import ImageViewScreen from "./ImageViewScreen";
 
 const BusDetails = ({ route }) => {
   const { user } = route.params;
   const { data, loading, request } = useApi(getBusDetails);
+  const { visible, hide, show } = useVisible();
+  const { imageUri, imageSet } = useImage();
 
   const {
     busNo,
@@ -37,12 +50,19 @@ const BusDetails = ({ route }) => {
   if (loading) return <Loader />;
 
   return (
-    <View style={styles.container}>
+    <Screen>
       <FlatList
         style={{ flex: 1, paddingHorizontal: 20 }}
         ListHeaderComponent={
           <>
-            <View style={styles.imageAndDetails}>
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => {
+                show();
+                imageSet(image);
+              }}
+              style={styles.imageAndDetails}
+            >
               <Image
                 style={styles.squareImage}
                 source={
@@ -51,7 +71,7 @@ const BusDetails = ({ route }) => {
                     : require("../assets/zaid-saleem-image.jpg")
                 }
               />
-            </View>
+            </TouchableOpacity>
             <Seperator />
             <AppText style={styles.heading}>Personal Information</AppText>
           </>
@@ -78,7 +98,8 @@ const BusDetails = ({ route }) => {
           </>
         )}
       />
-    </View>
+      <ImageViewScreen hideModal={hide} imageUri={imageUri} visible={visible} />
+    </Screen>
   );
 };
 
@@ -88,9 +109,7 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
     color: colors.lightBlack,
   },
-  container: {
-    flex: 1,
-  },
+
   heading: {
     fontSize: 27,
     marginTop: 5,
