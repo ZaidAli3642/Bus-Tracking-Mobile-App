@@ -1,13 +1,13 @@
 import {
   StyleSheet,
-  Text,
   View,
-  Dimensions,
   FlatList,
-  Touchable,
   TouchableOpacity,
+  TextInput,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from "react-native";
-import { TextInput } from "react-native-paper";
+// import { TextInput } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import Screen from "../components/Screen";
@@ -19,11 +19,7 @@ import AppButton from "../components/AppButton";
 import Icon from "../components/Icon";
 import { useContext, useEffect, useRef, useState } from "react";
 import AuthContext from "../context/AuthContext";
-import {
-  createChatConversation,
-  createConversation,
-  send,
-} from "../firebase/firebaseCalls/chat";
+import { createConversation, send } from "../firebase/firebaseCalls/chat";
 import { useConversation } from "../hooks/useConversation";
 import {
   collection,
@@ -34,7 +30,6 @@ import {
   where,
 } from "firebase/firestore";
 import { database } from "../firebase/firebaseConfig";
-import Loader from "../components/Loader";
 import AppText from "../components/AppText";
 
 const ChatsScreen = ({ navigation, route }) => {
@@ -48,6 +43,7 @@ const ChatsScreen = ({ navigation, route }) => {
     firstname,
     lastname,
     designation,
+    fullName,
   } = route.params.chatPerson;
 
   const { conversation, requestConversation } =
@@ -89,6 +85,7 @@ const ChatsScreen = ({ navigation, route }) => {
   };
 
   useEffect(() => {
+    textInput.current?.focus();
     setLoading(true);
     requestConversation(user, route.params.chatPerson);
   }, []);
@@ -113,7 +110,7 @@ const ChatsScreen = ({ navigation, route }) => {
         </TouchableOpacity>
         <ListItem
           color={colors.white}
-          label={`${firstname} ${lastname}`}
+          label={fullName ? fullName : `${firstname} ${lastname}`}
           description={designation}
         />
       </View>
@@ -128,6 +125,11 @@ const ChatsScreen = ({ navigation, route }) => {
         <FlatList
           data={[...messages].reverse()}
           inverted={true}
+          onScroll={() => {
+            !textInput.current.focus();
+            Keyboard.dismiss();
+          }}
+          keyboardShouldPersistTaps="handled"
           keyExtractor={(message) => message.id.toString()}
           renderItem={({ item }) => (
             <Message message={item.message} own={item.senderId === user.id} />
@@ -136,14 +138,17 @@ const ChatsScreen = ({ navigation, route }) => {
       )}
 
       <View style={styles.messageInput}>
-        <TextInput
-          ref={textInput}
-          style={styles.input}
-          underlineColor="transparent"
-          activeUnderlineColor="transparent"
-          placeholder="Write a message!"
-          onChangeText={(text) => setMessage(text)}
-        />
+        <TouchableWithoutFeedback onPress={() => textInput.current.focus()}>
+          <TextInput
+            ref={textInput}
+            style={styles.input}
+            underlineColor="transparent"
+            activeUnderlineColor="transparent"
+            placeholder="Write a message!"
+            cursorColor={"purple"}
+            onChangeText={(text) => setMessage(text)}
+          />
+        </TouchableWithoutFeedback>
         <AppButton
           style={styles.button}
           IconComponent={
@@ -173,13 +178,21 @@ const styles = StyleSheet.create({
     paddingTop: 0,
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
+    width: "100%",
+    paddingVertical: 10,
+    backgroundColor: "#00000000",
   },
   input: {
     padding: 0,
     borderRadius: 50,
-    borderTopLeftRadius: 40,
-    borderTopRightRadius: 40,
-    height: 60,
+    height: 50,
+    marginHorizontal: 5,
+    paddingLeft: 20,
+    backgroundColor: colors.veryLightBlack,
+    borderColor: colors.whiteSmoke,
+    borderWidth: 1,
+    elevation: 10,
     flex: 1,
   },
   button: {
