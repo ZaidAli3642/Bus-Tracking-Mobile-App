@@ -5,19 +5,14 @@ const HomeScreen = ({ navigation }) => {
   return (
     <ImageBackground
       style={styles.backgroundImage}
-      resizeMode="cover"
-      blurRadius={5}
-      source={require("../assets/background-image.jpg")}
+      resizeMode="contain"
+      source={require("../assets/home-screen.png")}
     >
-      <Image
-        style={styles.logo}
-        resizeMode="contain"
-        source={require("../assets/BTS.png")}
-      />
       <View style={styles.buttonContainer}>
         <AppButton
           title="Login as Driver"
           style={styles.button}
+          buttonColor="#25a2e0"
           onPress={() =>
             navigation.navigate("Login", {
               loginUser: "drivers",
@@ -26,7 +21,7 @@ const HomeScreen = ({ navigation }) => {
         />
         <AppButton
           title="Login as Parent"
-          style={[styles.button, styles.buttonColor]}
+          style={styles.button}
           onPress={() =>
             navigation.navigate("Login", {
               loginUser: "parent",
@@ -48,9 +43,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     marginVertical: 5,
   },
-  buttonColor: {
-    backgroundColor: "tomato",
-  },
+
   buttonContainer: {
     padding: 20,
     width: "100%",
