@@ -14,7 +14,7 @@ const StudentsListScreen = ({ navigation }) => {
   const { user } = useContext(AuthContext);
   const { data, loading, request } = useApi(getStudents || []);
 
-  console.log(data);
+  console.log("Student Data : ", data);
 
   useEffect(() => {
     request(user);
