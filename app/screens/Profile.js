@@ -57,19 +57,22 @@ const Profile = ({ navigation }) => {
   return (
     <>
       <Screen>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("QRCode")}
-          style={{
-            position: "absolute",
-            top: 40,
-            right: 20,
-            width: 30,
-            height: 30,
-            zIndex: 999,
-          }}
-        >
-          <MaterialIcons name="qr-code-scanner" size={24} color="black" />
-        </TouchableOpacity>
+        {user.loginUser === "drivers" && (
+          <TouchableOpacity
+            onPress={() => navigation.navigate("QRCode")}
+            style={{
+              position: "absolute",
+              top: 40,
+              right: 20,
+              width: 30,
+              height: 30,
+              zIndex: 999,
+            }}
+          >
+            <MaterialIcons name="qr-code-scanner" size={24} color="black" />
+          </TouchableOpacity>
+        )}
+
         <AppText style={styles.heading}>Menu</AppText>
         <View style={styles.personal}>
           <TouchableOpacity
