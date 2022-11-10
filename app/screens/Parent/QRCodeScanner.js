@@ -33,6 +33,8 @@ const QRCodeScanner = () => {
 
   const handleBarCodeScanned = async ({ type, data }) => {
     setScanned(true);
+    if (!data.includes("studentId"))
+      return alert("Sorry! this QR Code is invalid.");
     try {
       const scannedData = JSON.parse(data);
 
