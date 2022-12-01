@@ -1,7 +1,14 @@
-import { TouchableHighlight, Image, Dimensions } from "react-native";
+import {
+  TouchableHighlight,
+  Image,
+  Dimensions,
+  Text,
+  View,
+  StyleSheet,
+} from "react-native";
 import { List } from "react-native-paper";
 
-import { defaultStyles } from "../config";
+import { colors, defaultStyles } from "../config";
 
 const ListItem = ({
   label,
@@ -11,7 +18,9 @@ const ListItem = ({
   rightIcon,
   onPress,
   color,
+  messagesCount,
 }) => {
+  console.log("Messages Count : ", messagesCount);
   const handleLeftProp = (props) => {
     if (image || image === "")
       return (
@@ -37,12 +46,35 @@ const ListItem = ({
         description={description ? description : null}
         descriptionStyle={[defaultStyles.listItemDescription, { color: color }]}
         left={(props) => handleLeftProp(props)}
-        right={(props) =>
-          rightIcon ? <List.Icon {...props} icon={rightIcon} /> : null
-        }
+        right={(props) => (
+          <View
+            style={{
+              alignItems: "center",
+              flexDirection: "row",
+            }}
+          >
+            {messagesCount
+              ? messagesCount !== 0 && (
+                  <Text style={styles.messagesCount}>{messagesCount}</Text>
+                )
+              : null}
+            {rightIcon ? <List.Icon {...props} icon={rightIcon} /> : null}
+          </View>
+        )}
       />
     </TouchableHighlight>
   );
 };
+
+const styles = StyleSheet.create({
+  messagesCount: {
+    backgroundColor: colors.purple,
+    fontSize: 20,
+    color: "white",
+    padding: 10,
+    paddingHorizontal: 20,
+    borderRadius: 50,
+  },
+});
 
 export default ListItem;

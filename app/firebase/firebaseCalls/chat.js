@@ -59,3 +59,29 @@ export const send = async (data) => {
   const messagesCollections = collection(database, "messages");
   await addDoc(messagesCollections, data);
 };
+
+export const unReadMessages = async (sender, conversation) => {
+  try {
+    const notificationsCollection = collection(database, "notifications");
+    const q = query(
+      notificationsCollection,
+      where("messageRead", "==", false),
+      where("senderId", "==", sender.id),
+      where("conversationId", "==", conversation.conversationId)
+    );
+    const unReadMessagesSnapshot = await getDocs(q);
+    const unReadMessages = unReadMessagesSnapshot.docs.map((message) => ({
+      id: message.id,
+      ...message.data(),
+    }));
+
+    return unReadMessages;
+  } catch (error) {
+    console.log("Notifications ERROR: ", error);
+  }
+};
+
+export const messageNotifications = async (data) => {
+  const notificationCollection = collection(database, "notifications");
+  await addDoc(notificationCollection, data);
+};

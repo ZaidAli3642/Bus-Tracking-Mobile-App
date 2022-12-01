@@ -19,14 +19,21 @@ import AppButton from "../components/AppButton";
 import Icon from "../components/Icon";
 import { useContext, useEffect, useRef, useState } from "react";
 import AuthContext from "../context/AuthContext";
-import { createConversation, send } from "../firebase/firebaseCalls/chat";
+import {
+  createConversation,
+  messageNotifications,
+  send,
+  unReadMessages,
+} from "../firebase/firebaseCalls/chat";
 import { useConversation } from "../hooks/useConversation";
 import {
   collection,
+  doc,
   onSnapshot,
   orderBy,
   query,
   serverTimestamp,
+  updateDoc,
   where,
 } from "firebase/firestore";
 import { database } from "../firebase/firebaseConfig";
@@ -77,8 +84,33 @@ const ChatsScreen = ({ navigation, route }) => {
         conversationId: conversation.conversationId,
         createdAt: serverTimestamp(),
       };
+      const messageNotification = {
+        messageRead: false,
+        notificationReceive: user.institute,
+        receiverId: receiverId,
+        conversationId: conversation.conversationId,
+        senderId: user.id,
+        data: [],
+      };
+
       textInput.current.clear();
       await send(data);
+
+      const unReadMessage = await unReadMessages(user, conversation);
+      console.log("Messages Zaid Saleem: ", unReadMessage);
+
+      delete data.createdAt;
+      if (unReadMessage.length > 0) {
+        // update the collection
+        messageNotification.data = [...unReadMessage[0].data, data];
+
+        const docRef = doc(database, "notifications", unReadMessage[0].id);
+
+        await updateDoc(docRef, messageNotification);
+        return;
+      }
+      messageNotification.data = [data];
+      await messageNotifications(messageNotification);
     } catch (error) {
       console.log(error);
     }
