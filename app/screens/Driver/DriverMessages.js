@@ -12,13 +12,28 @@ import { defaultStyles } from "../../config";
 import { getAdmins, getDriverChats } from "../../firebase/firebaseCalls/admin";
 import { useApi } from "../../hooks/useApi";
 import Loader from "../../components/Loader";
-import { collection, onSnapshot, query, where } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  onSnapshot,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 import { database } from "../../firebase/firebaseConfig";
+import { async } from "@firebase/util";
 
 const DriverMessages = ({ navigation }) => {
   const { user } = useContext(AuthContext);
   const { data, loading, request } = useApi(getDriverChats);
   const [messagesNumber, setMessagesNumber] = useState(0);
+
+  console.log("Chats  : ", data);
+  const handleReadMesasge = async (person) => {
+    console.log("Person  : ", person);
+    const docRef = doc(database, "notifications", person.messageNumberId);
+    await updateDoc(docRef, { messageRead: true });
+  };
 
   const getMessagesNumber = async () => {
     const messagesCollection = collection(database, "notifications");
@@ -79,9 +94,10 @@ const DriverMessages = ({ navigation }) => {
                   description={item.designation}
                   rightIcon="chevron-right"
                   messagesCount={item.messagesCount}
-                  onPress={() =>
-                    navigation.navigate("Chat", { chatPerson: item })
-                  }
+                  onPress={() => {
+                    handleReadMesasge(item);
+                    navigation.navigate("Chat", { chatPerson: item });
+                  }}
                 />
               </View>
             );

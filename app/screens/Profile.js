@@ -20,6 +20,8 @@ import AuthContext from "../context/AuthContext";
 import { useVisible } from "../hooks/useVisible";
 import { useImage } from "../hooks/useImage";
 import ImageViewScreen from "./ImageViewScreen";
+import { doc, updateDoc } from "firebase/firestore";
+import { database } from "../firebase/firebaseConfig";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -31,6 +33,7 @@ Notifications.setNotificationHandler({
 
 const Profile = ({ navigation }) => {
   const { user } = useContext(AuthContext);
+  console.log("User : ", user);
   const { visible, hide, show } = useVisible();
   const { imageUri, imageSet } = useImage();
 
@@ -39,7 +42,7 @@ const Profile = ({ navigation }) => {
   const notificationListener = useRef();
   const responseListener = useRef();
 
-  async function sendPushNotification(expoPushToken) {
+  async function sendPushNotification(expoPushToken, title, body) {
     const message = {
       to: expoPushToken,
       sound: "default",
@@ -74,7 +77,7 @@ const Profile = ({ navigation }) => {
         return;
       }
       token = (await Notifications.getExpoPushTokenAsync()).data;
-      console.log(token);
+      console.log("Token : ", token);
     } else {
       alert("Must use physical device for Push Notifications");
     }
@@ -91,10 +94,18 @@ const Profile = ({ navigation }) => {
     return token;
   }
 
+  const storePushToken = async (token) => {
+    let collectionName = "parent";
+    if (user.loginUser === "drivers") collectionName = "drivers";
+    const docRef = doc(database, collectionName, user.id);
+    await updateDoc(docRef, { pushToken: token });
+  };
+
   useEffect(() => {
-    registerForPushNotificationsAsync().then((token) =>
-      setExpoPushToken(token)
-    );
+    registerForPushNotificationsAsync().then((token) => {
+      storePushToken(token);
+      setExpoPushToken(token);
+    });
 
     // This listener is fired whenever a notification is received while the app is foregrounded
     notificationListener.current =

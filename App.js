@@ -7,7 +7,6 @@ import AuthContext from "./app/context/AuthContext";
 import useAppFonts from "./app/hooks/useAppFonts";
 import myTheme from "./app/theme/theme";
 import { getSession } from "./app/storage/storeSession";
-import ImageViewScreen from "./app/screens/ImageViewScreen";
 import { StatusBar } from "expo-status-bar";
 
 export default function App() {

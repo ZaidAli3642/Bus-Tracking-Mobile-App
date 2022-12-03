@@ -13,9 +13,11 @@ import { useApi } from "../../hooks/useApi";
 import Loader from "../../components/Loader";
 import {
   collection,
+  doc,
   getDocs,
   onSnapshot,
   query,
+  updateDoc,
   where,
 } from "firebase/firestore";
 import { database } from "../../firebase/firebaseConfig";
@@ -23,6 +25,13 @@ import { database } from "../../firebase/firebaseConfig";
 const ParentMessages = ({ navigation, user, setUser }) => {
   const { data, loading, request } = useApi(getParentChats);
   const [messagesNumber, setMessagesNumber] = useState(0);
+  console.log("Chats  : ", data);
+  const handleReadMesasge = async (person) => {
+    console.log("Person  : ", person);
+    if (!person.messageNumberId) return;
+    const docRef = doc(database, "notifications", person.messageNumberId);
+    await updateDoc(docRef, { messageRead: true });
+  };
 
   const getMessagesNumber = async () => {
     const messagesCollection = collection(database, "notifications");
@@ -82,9 +91,10 @@ const ParentMessages = ({ navigation, user, setUser }) => {
                   description={item.designation}
                   rightIcon="chevron-right"
                   messagesCount={item.messagesCount}
-                  onPress={() =>
-                    navigation.navigate("Chat", { chatPerson: item })
-                  }
+                  onPress={() => {
+                    navigation.navigate("Chat", { chatPerson: item });
+                    handleReadMesasge(item);
+                  }}
                 />
               </View>
             );

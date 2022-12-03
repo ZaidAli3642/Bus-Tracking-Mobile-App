@@ -53,6 +53,7 @@ const ChatsScreen = ({ navigation, route }) => {
     fullName,
   } = route.params.chatPerson;
 
+  console.log("Push token : ", route.params);
   const { conversation, requestConversation } =
     useConversation(createConversation);
 
@@ -75,6 +76,28 @@ const ChatsScreen = ({ navigation, route }) => {
     setLoading(false);
   };
 
+  async function sendPushNotification(expoPushToken, title, body) {
+    const message = {
+      to: expoPushToken,
+      sound: "default",
+      title: title,
+      body: body,
+      data: { someData: "goes here" },
+    };
+
+    console.log("TOken ,", message);
+    await fetch("https://exp.host/--/api/v2/push/send", {
+      method: "POST",
+      mode: "no-cors",
+      headers: {
+        Accept: "application/json",
+        "Accept-encoding": "gzip, deflate",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(message),
+    });
+  }
+
   const sendMessage = async () => {
     try {
       const data = {
@@ -95,7 +118,8 @@ const ChatsScreen = ({ navigation, route }) => {
 
       textInput.current.clear();
       await send(data);
-
+      const pushToken = route?.params?.chatPerson?.pushToken;
+      if (pushToken) sendPushNotification(pushToken, "New message", message);
       const unReadMessage = await unReadMessages(user, conversation);
       console.log("Messages Zaid Saleem: ", unReadMessage);
 
