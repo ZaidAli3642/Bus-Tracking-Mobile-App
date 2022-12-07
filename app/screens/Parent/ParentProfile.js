@@ -10,6 +10,8 @@ import ImageViewScreen from "../ImageViewScreen";
 import { useVisible } from "../../hooks/useVisible";
 import { useImage } from "../../hooks/useImage";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { collection, doc, updateDoc } from "firebase/firestore";
+import { database } from "../../firebase/firebaseConfig";
 
 const ParentProfile = ({ navigation, user, setUser }) => {
   const { visible, show, hide } = useVisible();
@@ -44,6 +46,8 @@ const ParentProfile = ({ navigation, user, setUser }) => {
 
   const logout = async () => {
     setUser(null);
+    const userCollection = doc(database, "parent", user.id);
+    await updateDoc(userCollection, { isLoggedIn: false });
     await removeSession();
   };
   return (

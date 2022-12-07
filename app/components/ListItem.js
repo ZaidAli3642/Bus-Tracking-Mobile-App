@@ -7,6 +7,7 @@ import {
   StyleSheet,
 } from "react-native";
 import { List } from "react-native-paper";
+import { format } from "timeago.js";
 
 import { colors, defaultStyles } from "../config";
 
@@ -19,8 +20,8 @@ const ListItem = ({
   onPress,
   color,
   messagesCount,
+  created_at,
 }) => {
-  console.log("Messages Count : ", messagesCount);
   const handleLeftProp = (props) => {
     if (image || image === "")
       return (
@@ -59,6 +60,7 @@ const ListItem = ({
                 )
               : null}
             {rightIcon ? <List.Icon {...props} icon={rightIcon} /> : null}
+            {created_at && <Text>{format(created_at.toDate())}</Text>}
           </View>
         )}
       />
