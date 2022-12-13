@@ -22,13 +22,15 @@ const Login = ({ route }) => {
   const { setUser } = useContext(AuthContext);
 
   const { loginUser } = route.params;
-
+  console.log("Login User : ", loginUser);
   const login = async (values) => {
     const user = await handleParentlogin(values, loginUser);
     console.log("User : ", user);
     await storage.saveSession(user);
-    const userCollection = doc(database, "parent", user.id);
-    await updateDoc(userCollection, { isLoggedIn: true });
+    if (loginUser === "parent") {
+      const userCollection = doc(database, "parent", user.id);
+      await updateDoc(userCollection, { isLoggedIn: true });
+    }
     setUser(user);
   };
 
