@@ -3,10 +3,18 @@ import React, { useContext, useEffect, useState } from "react";
 import { BarCodeScanner } from "expo-barcode-scanner";
 
 import { database } from "../../firebase/firebaseConfig";
-import { updateDoc, doc, setDoc, getDoc } from "firebase/firestore";
+import {
+  updateDoc,
+  doc,
+  setDoc,
+  getDoc,
+  collection,
+  where,
+  getDocs,
+  query,
+} from "firebase/firestore";
 import AuthContext from "../../context/AuthContext";
 import { colors } from "../../config";
-import { async } from "@firebase/util";
 
 const QRCodeScanner = () => {
   const { user } = useContext(AuthContext);
@@ -23,6 +31,7 @@ const QRCodeScanner = () => {
   };
 
   const getStudent = async (scannedData) => {
+    console.log("Scanned Data : ", scannedData);
     const studentRef = doc(database, "students", scannedData.studentId);
     const docSnap = await getDoc(studentRef);
     let onAndOffBoard = docSnap.get("onAndOffBoard");
@@ -30,6 +39,28 @@ const QRCodeScanner = () => {
     if (onAndOffBoard === true) return false;
     return true;
   };
+
+  async function sendPushNotification(expoPushToken, title, body) {
+    const message = {
+      to: expoPushToken,
+      sound: "default",
+      title: title,
+      body: body,
+      data: { someData: "goes here" },
+    };
+
+    console.log("TOken ,", message);
+    await fetch("https://exp.host/--/api/v2/push/send", {
+      method: "POST",
+      mode: "no-cors",
+      headers: {
+        Accept: "application/json",
+        "Accept-encoding": "gzip, deflate",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(message),
+    });
+  }
 
   const handleBarCodeScanned = async ({ type, data }) => {
     setScanned(true);
@@ -52,15 +83,41 @@ const QRCodeScanner = () => {
       await updateDoc(docRef, { onAndOffBoard });
 
       setLoading(false);
-      alert(
-        onAndOffBoard
-          ? `${scannedData.rollNo} is on-Boarded.`
-          : `${scannedData.rollNo} is off-Boarded.`
-      );
+      const message = onAndOffBoard
+        ? `${scannedData.rollNo} is on-Boarded.`
+        : `${scannedData.rollNo} is off-Boarded.`;
+      alert(message);
+
+      const pushNotificationToken = await getParent(scannedData);
+
+      if (pushNotificationToken) {
+        await sendPushNotification(
+          pushNotificationToken,
+          "Student Board",
+          message
+        );
+      }
     } catch (error) {
       alert("Something went wrong while scanning QR");
       console.log("ERROR SCANNING BAR CODE :", error);
     }
+  };
+
+  const getParent = async (scannedData) => {
+    const parentCollection = collection(database, "parent");
+    const q = query(
+      parentCollection,
+      where("studentId", "==", scannedData.rollNo)
+    );
+    const parentSnapshot = await getDocs(q);
+
+    const parent = parentSnapshot.docs.map((parent) => ({
+      id: parent.id,
+      ...parent.data(),
+    }));
+
+    console.log("Getting parent : ", parent);
+    return parent[0].pushToken;
   };
 
   useEffect(() => {
