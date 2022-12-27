@@ -14,6 +14,7 @@ import StudentsListScreen from "../screens/Driver/StudentsListScreen";
 import ShowStudentProfile from "../screens/ShowStudentProfile";
 import { QRCodeScanner } from "../screens/Parent";
 import NotificationsScreen from "../screens/NotificationsScreen";
+import StudentList from "../screens/Parent/StudentList";
 
 const Stack = createStackNavigator();
 
@@ -44,6 +45,7 @@ const MainNavigator = () => (
     <Stack.Screen name="MyProfile" component={MyProfile} />
     <Stack.Screen name="StudentProfile" component={ShowStudentProfile} />
     <Stack.Screen name="StudentList" component={StudentsListScreen} />
+    <Stack.Screen name="ParentStudentList" component={StudentList} />
     <Stack.Screen name="DriverProfile" component={DriverProfile} />
     <Stack.Screen name="BusDetails" component={BusDetails} />
     <Stack.Screen name="Update" component={UpdateInformation} />

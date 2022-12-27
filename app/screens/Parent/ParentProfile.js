@@ -40,7 +40,7 @@ const ParentProfile = ({ navigation, user, setUser }) => {
       id: 3,
       info: parentcontact,
       icon: "cellphone",
-      parentContact: "Parent Contact",
+      label: "Parent Contact",
     },
   ];
 

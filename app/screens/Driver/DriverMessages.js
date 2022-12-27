@@ -91,7 +91,7 @@ const DriverMessages = ({ navigation }) => {
                       ? item.fullName
                       : `${item.firstname} ${item.lastname}`
                   }
-                  description={item.designation}
+                  description={item.designation || "parent"}
                   rightIcon="chevron-right"
                   messagesCount={item.messagesCount}
                   onPress={() => {

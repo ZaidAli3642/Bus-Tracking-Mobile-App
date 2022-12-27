@@ -1,6 +1,7 @@
 import { Button, StyleSheet, ActivityIndicator } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import { BarCodeScanner } from "expo-barcode-scanner";
+import moment from "moment";
 
 import { database } from "../../firebase/firebaseConfig";
 import {
@@ -20,6 +21,7 @@ const QRCodeScanner = () => {
   const { user } = useContext(AuthContext);
   const [scanned, setScanned] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [institute, setInsitute] = useState({});
   const getBarCodeScannerPermissions = async () => {
     const { status } = await BarCodeScanner.getPermissionsAsync();
     if (status === "granted") return true;
@@ -38,6 +40,22 @@ const QRCodeScanner = () => {
 
     if (onAndOffBoard === true) return false;
     return true;
+  };
+
+  const getInstitute = async () => {
+    const instituteCollection = collection(database, "institute");
+
+    const q = query(
+      instituteCollection,
+      where("institute", "==", user.institute)
+    );
+    const instituteSnapshot = await getDocs(q);
+    const institute = instituteSnapshot.docs.map((institute) => ({
+      id: institute.id,
+      ...institute.data(),
+    }));
+
+    setInsitute(institute[0]);
   };
 
   async function sendPushNotification(expoPushToken, title, body) {
@@ -79,15 +97,35 @@ const QRCodeScanner = () => {
 
       const onAndOffBoard = await getStudent(scannedData);
 
+      const openingTime = moment(institute.openingTime, "h:mm A");
+      const closingTIme = moment(institute.closingTime, "h:mm A");
+      const time2 = moment();
+      const duration = moment.duration(time2.diff(openingTime));
+      const duration2 = moment.duration(time2.diff(closingTIme));
+
+      const minutes = duration.asMinutes();
+      const minutes2 = duration2.asMinutes();
+      console.log("Closing time : ", onAndOffBoard);
+      console.log("Closing time : ", minutes);
+      console.log("Closing time : ", minutes2);
+      if (!onAndOffBoard && minutes < 0) {
+        setLoading(false);
+        return alert(`${scannedData.rollNo} cannot be off boarded now.`);
+      }
+      if (onAndOffBoard) {
+        if (minutes > 0 && minutes2 < 0) {
+          setLoading(false);
+          return alert("This is not a closing time now.");
+        }
+      }
       const docRef = doc(database, "students", scannedData.studentId);
       await updateDoc(docRef, { onAndOffBoard });
 
-      setLoading(false);
       const message = onAndOffBoard
         ? `${scannedData.rollNo} is on-Boarded.`
         : `${scannedData.rollNo} is off-Boarded.`;
       alert(message);
-
+      setLoading(false);
       const pushNotificationToken = await getParent(scannedData);
 
       if (pushNotificationToken) {
@@ -122,6 +160,7 @@ const QRCodeScanner = () => {
 
   useEffect(() => {
     getBarCodeScannerPermissions();
+    getInstitute();
   }, []);
 
   return (

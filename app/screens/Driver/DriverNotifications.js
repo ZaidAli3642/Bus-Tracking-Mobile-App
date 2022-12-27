@@ -6,8 +6,13 @@ import Seperator from "../../components/Seperator";
 import {
   addDoc,
   collection,
+  doc,
+  getDocs,
+  query,
   serverTimestamp,
   Timestamp,
+  updateDoc,
+  where,
 } from "firebase/firestore";
 import { database } from "../../firebase/firebaseConfig";
 import { useApi } from "../../hooks/useApi";
@@ -68,6 +73,7 @@ const DriverNotifications = ({ user, setUser }) => {
     if (item.id === 5) parent = false;
 
     const alertCollection = collection(database, "alert");
+    const notificationCollection = collection(database, "notifications");
     await addDoc(alertCollection, {
       title: item.label,
       description: item.description,
@@ -77,6 +83,48 @@ const DriverNotifications = ({ user, setUser }) => {
       busNo: user.busNo,
       created_at: serverTimestamp(),
     });
+
+    const q = query(
+      notificationCollection,
+      where("institute", "==", user.institute),
+      where("alert", "==", true),
+      where("messageRead", "==", false)
+    );
+
+    const notificationSnapshot = await getDocs(q);
+    console.log("Alerts snap", notificationSnapshot.empty);
+    const notifications = notificationSnapshot.docs.map((notification) => ({
+      id: notification.id,
+      ...notification.data(),
+    }));
+
+    console.log("Notifications : ", notifications);
+    const alertData = {
+      parent: parent,
+      admin: true,
+      institute: user.institute,
+      alert: true,
+      messageRead: false,
+      created_at: serverTimestamp(),
+      data: [],
+    };
+
+    const dataNotification = {
+      title: item.label,
+      description: item.description,
+      busNo: user.busNo,
+    };
+
+    if (notifications.length > 0) {
+      // update the doc
+      alertData.data = [...notifications[0].data, dataNotification];
+      const docRef = doc(database, "notifications", notifications[0].id);
+
+      await updateDoc(docRef, alertData);
+    } else {
+      alertData.data = [dataNotification];
+      await addDoc(notificationCollection, alertData);
+    }
 
     if (parent === 5) return;
     await Promise.all(

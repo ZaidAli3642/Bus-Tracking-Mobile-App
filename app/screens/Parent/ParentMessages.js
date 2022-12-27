@@ -88,7 +88,7 @@ const ParentMessages = ({ navigation, user, setUser }) => {
                       ? item.fullName
                       : `${item.firstname} ${item.lastname}`
                   }
-                  description={item.designation}
+                  description={item.designation || "driver"}
                   rightIcon="chevron-right"
                   messagesCount={item.messagesCount}
                   onPress={() => {

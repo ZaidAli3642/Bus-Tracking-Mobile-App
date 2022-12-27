@@ -140,7 +140,7 @@ const Profile = ({ navigation }) => {
       icon: "school",
       label: "Student Details",
       rightIcon: "chevron-right",
-      target: user.loginUser === "parent" ? "StudentProfile" : "StudentList",
+      target: user.loginUser === "parent" ? "ParentStudentList" : "StudentList",
     },
     {
       id: 3,
@@ -158,32 +158,23 @@ const Profile = ({ navigation }) => {
     },
     {
       id: 5,
-      icon: "bus",
-      label: "Notifications",
+      icon: "alert",
+      label: "Emergency Alerts",
       rightIcon: "chevron-right",
       target: "Notifications",
+    },
+    {
+      id: 6,
+      icon: "qrcode",
+      label: "Attendance Scanner",
+      rightIcon: "chevron-right",
+      target: "QRCode",
     },
   ];
 
   return (
     <>
       <Screen>
-        {user.loginUser === "drivers" && (
-          <TouchableOpacity
-            onPress={() => navigation.navigate("QRCode")}
-            style={{
-              position: "absolute",
-              top: 40,
-              right: 20,
-              width: 30,
-              height: 30,
-              zIndex: 999,
-            }}
-          >
-            <MaterialIcons name="qr-code-scanner" size={24} color="black" />
-          </TouchableOpacity>
-        )}
-
         <AppText style={styles.heading}>Menu</AppText>
         <View style={styles.personal}>
           <TouchableOpacity

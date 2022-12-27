@@ -10,11 +10,6 @@ const HomeScreen = ({ navigation }) => {
       source={require("../assets/home-screen.png")}
     >
       <View style={styles.buttonContainer}>
-        {/* <AppButton
-          title="Send Notification"
-          style={{ backgroundColor: "tomato" }}
-          onPress={sendPushNotification}
-        /> */}
         <AppButton
           title="Login as Driver"
           style={styles.button}

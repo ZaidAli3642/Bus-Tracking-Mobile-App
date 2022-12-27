@@ -12,6 +12,7 @@ import * as storage from "../storage/storeSession";
 import { handleParentlogin } from "../firebase/firebaseCalls/auth";
 import { collection, doc, updateDoc } from "firebase/firestore";
 import { database } from "../firebase/firebaseConfig";
+import AppTextMaskInput from "../components/Form/AppTextMaskInput";
 
 const validationSchema = Yup.object().shape({
   nationalIdentityNumber: Yup.string().required().label("National Id"),
@@ -27,10 +28,8 @@ const Login = ({ route }) => {
     const user = await handleParentlogin(values, loginUser);
     console.log("User : ", user);
     await storage.saveSession(user);
-    if (loginUser === "parent") {
-      const userCollection = doc(database, "parent", user.id);
-      await updateDoc(userCollection, { isLoggedIn: true });
-    }
+    const userCollection = doc(database, loginUser, user.id);
+    await updateDoc(userCollection, { isLoggedIn: true });
     setUser(user);
   };
 
@@ -49,14 +48,15 @@ const Login = ({ route }) => {
             validationSchema={validationSchema}
             onSubmit={login}
           >
-            <AppTextInput
+            <AppTextMaskInput
               label="National Identity Number"
               name="nationalIdentityNumber"
               autoCorrect={false}
               autoComplete="off"
               autoCapitalize="none"
               textContentType="none"
-              keyboardType="default"
+              keyboardType="numeric"
+              mask={"99999-9999999-9"}
             />
             <AppTextInput
               label="Password"

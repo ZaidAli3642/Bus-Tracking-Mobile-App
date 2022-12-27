@@ -4,29 +4,35 @@ import { useFormikContext } from "formik";
 
 import { colors } from "../../config";
 import ErrorMessage from "../ErrorMessage";
+import { TextInputMask } from "react-native-masked-text";
 
-const AppTextInput = ({ label, name, ...otherProps }) => {
+const AppTextMaskInput = ({ label, name, mask, ...otherProps }) => {
   const { handleChange, errors } = useFormikContext();
   return (
     <>
-      <TextInput
-        mode="outlined"
-        label={label}
+      <TextInputMask
+        type="custom"
+        placeholder={label}
         onChangeText={handleChange(name)}
         {...otherProps}
         style={styles.input}
+        options={{ mask }}
       />
       <ErrorMessage error={errors[name]} />
     </>
   );
 };
 
-export default AppTextInput;
+export default AppTextMaskInput;
 
 const styles = StyleSheet.create({
   input: {
     fontSize: 15,
     color: colors.lightBlack,
     marginVertical: 10,
+    borderColor: colors.lightBlack,
+    borderWidth: 1,
+    borderRadius: 5,
+    padding: 15,
   },
 });

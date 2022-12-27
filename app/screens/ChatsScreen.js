@@ -118,8 +118,9 @@ const ChatsScreen = ({ navigation, route }) => {
 
       textInput.current.clear();
       await send(data);
-      const pushToken = route?.params?.chatPerson?.pushToken;
-      if (pushToken) sendPushNotification(pushToken, "New message", message);
+      const { pushToken, isLoggedIn } = route?.params?.chatPerson;
+      if (pushToken && isLoggedIn)
+        sendPushNotification(pushToken, "New message", message);
       const unReadMessage = await unReadMessages(user, conversation);
       console.log("Messages Zaid Saleem: ", unReadMessage);
 

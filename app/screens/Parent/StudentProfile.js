@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import {
   FlatList,
   Image,
@@ -10,20 +9,15 @@ import {
 import AppText from "../../components/AppText";
 import ListItem from "../../components/ListItem";
 import Seperator from "../../components/Seperator";
-import Loader from "../../components/Loader";
 import { colors, fonts } from "../../config";
-import { getSpecificStudent } from "../../firebase/firebaseCalls/students";
-import { useApi } from "../../hooks/useApi";
 import { useVisible } from "../../hooks/useVisible";
 import { useImage } from "../../hooks/useImage";
 import ImageViewScreen from "../ImageViewScreen";
 
 const StudentProfile = ({ route }) => {
-  const { user } = route.params;
   const { visible, show, hide } = useVisible();
   const { imageUri, imageSet } = useImage();
-
-  const { data, loading, request } = useApi(getSpecificStudent);
+  const { student } = route.params;
 
   const {
     firstname,
@@ -38,7 +32,7 @@ const StudentProfile = ({ route }) => {
     busNo,
     image,
     institute,
-  } = data[0] || {};
+  } = student || {};
   const userDetails = [
     {
       id: 1,
@@ -60,11 +54,6 @@ const StudentProfile = ({ route }) => {
     { id: 8, info: busNo, icon: "bus", label: "Bus No" },
   ];
 
-  useEffect(() => {
-    request(user);
-  }, [user]);
-
-  if (loading) return <Loader />;
   return (
     <>
       <View style={styles.container}>
