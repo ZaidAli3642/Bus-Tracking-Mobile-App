@@ -13,6 +13,8 @@ import {
   where,
   getDocs,
   query,
+  addDoc,
+  serverTimestamp,
 } from "firebase/firestore";
 import AuthContext from "../../context/AuthContext";
 import { colors } from "../../config";
@@ -102,12 +104,14 @@ const QRCodeScanner = () => {
       const time2 = moment();
       const duration = moment.duration(time2.diff(openingTime));
       const duration2 = moment.duration(time2.diff(closingTIme));
+      const month = moment().month() + 1;
+      const year = moment().year();
+
+      console.log("MOnth and year : ", month, year);
 
       const minutes = duration.asMinutes();
       const minutes2 = duration2.asMinutes();
-      console.log("Closing time : ", onAndOffBoard);
-      console.log("Closing time : ", minutes);
-      console.log("Closing time : ", minutes2);
+
       if (!onAndOffBoard && minutes < 0) {
         setLoading(false);
         return alert(`${scannedData.rollNo} cannot be off boarded now.`);
@@ -118,8 +122,49 @@ const QRCodeScanner = () => {
           return alert("This is not a closing time now.");
         }
       }
+
       const docRef = doc(database, "students", scannedData.studentId);
-      await updateDoc(docRef, { onAndOffBoard });
+      await updateDoc(docRef, {
+        onAndOffBoard,
+        timeOnAndOffBoard: serverTimestamp(),
+      });
+
+      const student = await getDoc(docRef);
+
+      const attendanceData = {
+        institute: user.institute,
+        busNo: user.busNo,
+        openingTime: {},
+        closingTime: {},
+        firstname: student.get("firstname"),
+        lastname: student.get("lastname"),
+        rollNo: student.get("rollNo"),
+        driverName: user.firstname,
+        timeAndDate: serverTimestamp(),
+        month,
+        year,
+      };
+
+      if (minutes < 0) {
+        attendanceData.openingTime.onBoard = true;
+        attendanceData.openingTime.offBoard = false;
+      }
+      if (minutes > 0) {
+        attendanceData.openingTime.offBoard = true;
+        attendanceData.openingTime.onBoard = false;
+      }
+      if (minutes > 0 && minutes2 > 0) {
+        if (onAndOffBoard) {
+          attendanceData.closingTime.onBoard = true;
+          attendanceData.closingTime.offBoard = false;
+        } else {
+          attendanceData.closingTime.onBoard = false;
+          attendanceData.closingTime.offBoard = true;
+        }
+      }
+
+      const attendanceCollection = collection(database, "attendance");
+      await addDoc(attendanceCollection, attendanceData);
 
       const message = onAndOffBoard
         ? `${scannedData.rollNo} is on-Boarded.`
