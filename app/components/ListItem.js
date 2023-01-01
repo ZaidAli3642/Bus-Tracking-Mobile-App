@@ -21,8 +21,11 @@ const ListItem = ({
   color,
   messagesCount,
   created_at,
+  studentBoardingStatus,
+  onAndOffBoard = false,
 }) => {
-  console.log("Label : ", label);
+  console.log("Student on and off : ", studentBoardingStatus);
+
   const handleLeftProp = (props) => {
     if (image || image === "")
       return (
@@ -55,6 +58,21 @@ const ListItem = ({
               flexDirection: "row",
             }}
           >
+            {onAndOffBoard && (
+              <View
+                style={{
+                  width: 15,
+                  height: 15,
+                  borderRadius: 10,
+                  backgroundColor:
+                    studentBoardingStatus === false ||
+                    studentBoardingStatus === undefined
+                      ? colors.danger
+                      : "green",
+                }}
+              ></View>
+            )}
+
             {messagesCount
               ? messagesCount !== 0 && (
                   <Text style={styles.messagesCount}>{messagesCount}</Text>

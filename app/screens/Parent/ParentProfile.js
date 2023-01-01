@@ -69,7 +69,7 @@ const ParentProfile = ({ navigation, user, setUser }) => {
                       source={
                         image
                           ? { uri: image }
-                          : require("../../assets/zaid-saleem-image.jpg")
+                          : require("../../assets/profile-avatar.jpg")
                       }
                     />
                   </TouchableOpacity>

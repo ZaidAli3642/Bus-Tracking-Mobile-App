@@ -12,9 +12,13 @@ import UpdateInformation from "../screens/UpdateInformation";
 import AppNavigator from "./AppNavigator";
 import StudentsListScreen from "../screens/Driver/StudentsListScreen";
 import ShowStudentProfile from "../screens/ShowStudentProfile";
-import { QRCodeScanner } from "../screens/Parent";
+import {
+  QRCodeScanner,
+  ParentStudentAttendanceRecord,
+} from "../screens/Parent";
 import NotificationsScreen from "../screens/NotificationsScreen";
 import StudentList from "../screens/Parent/StudentList";
+import AttendanceRecrod from "../screens/AttendanceRecrod";
 
 const Stack = createStackNavigator();
 
@@ -50,6 +54,7 @@ const MainNavigator = () => (
     <Stack.Screen name="BusDetails" component={BusDetails} />
     <Stack.Screen name="Update" component={UpdateInformation} />
     <Stack.Screen name="QRCode" component={QRCodeScanner} />
+    <Stack.Screen name="Attendance" component={AttendanceRecrod} />
     <Stack.Screen name="Notifications" component={NotificationsScreen} />
   </Stack.Navigator>
 );

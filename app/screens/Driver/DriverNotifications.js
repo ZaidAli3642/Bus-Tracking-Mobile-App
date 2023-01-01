@@ -98,6 +98,7 @@ const DriverNotifications = ({ user, setUser }) => {
       ...notification.data(),
     }));
 
+    alert("Alert Sent");
     console.log("Notifications : ", notifications);
     const alertData = {
       parent: parent,

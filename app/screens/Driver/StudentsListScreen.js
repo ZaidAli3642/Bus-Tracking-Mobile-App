@@ -33,6 +33,8 @@ const StudentsListScreen = ({ navigation }) => {
             image={item.image ? item.image : studentAvatar()}
             label={`${item.firstname} ${item.lastname}`}
             description={item.parent}
+            onAndOffBoard={true}
+            studentBoardingStatus={item.onAndOffBoard}
             rightIcon="chevron-right"
             onPress={() =>
               navigation.navigate("StudentProfile", { student: item })

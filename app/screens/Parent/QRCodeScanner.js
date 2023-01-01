@@ -89,12 +89,16 @@ const QRCodeScanner = () => {
     try {
       const scannedData = JSON.parse(data);
 
+      console.log("Scanned Data : ", scannedData);
       if (
         scannedData.institute !== user.institute ||
         scannedData.busNo !== user.busNo
       )
         return alert("Sorry! this QR Code is invalid.");
 
+      const day = moment().day();
+      console.log("Day sent : ", day);
+      if (day === 7) return alert("School is not open today");
       setLoading(true);
 
       const onAndOffBoard = await getStudent(scannedData);
@@ -139,6 +143,7 @@ const QRCodeScanner = () => {
         firstname: student.get("firstname"),
         lastname: student.get("lastname"),
         rollNo: student.get("rollNo"),
+        fatherNID: student.get("fatherNID"),
         driverName: user.firstname,
         timeAndDate: serverTimestamp(),
         month,
@@ -190,7 +195,7 @@ const QRCodeScanner = () => {
     const parentCollection = collection(database, "parent");
     const q = query(
       parentCollection,
-      where("studentId", "==", scannedData.rollNo)
+      where("nationalIdentityNumber", "==", scannedData.fatherNID)
     );
     const parentSnapshot = await getDocs(q);
 
@@ -200,7 +205,7 @@ const QRCodeScanner = () => {
     }));
 
     console.log("Getting parent : ", parent);
-    return parent[0].pushToken;
+    return parent[0]?.pushToken;
   };
 
   useEffect(() => {

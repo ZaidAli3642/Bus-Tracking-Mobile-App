@@ -67,7 +67,7 @@ const UpdateInformation = () => {
         )}
         {!user.image && (
           <Image
-            source={require("../assets/zaid-saleem-image.jpg")}
+            source={require("../assets/profile-avatar.jpg")}
             style={[defaultStyles.image, styles.image]}
           />
         )}

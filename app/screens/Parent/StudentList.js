@@ -36,6 +36,8 @@ const StudentList = ({ navigation }) => {
             label={`${item.firstname} ${item.lastname}`}
             description={item.parent}
             rightIcon="chevron-right"
+            onAndOffBoard={true}
+            studentBoardingStatus={item.onAndOffBoard}
             onPress={() =>
               navigation.navigate("StudentProfile", { student: item })
             }

@@ -159,7 +159,8 @@ const Profile = ({ navigation }) => {
     {
       id: 5,
       icon: "alert",
-      label: "Emergency Alerts",
+      label:
+        user.loginUser === "drivers" ? "Emergency Alerts" : "Notifications",
       rightIcon: "chevron-right",
       target: "Notifications",
     },
@@ -169,6 +170,13 @@ const Profile = ({ navigation }) => {
       label: "Attendance Scanner",
       rightIcon: "chevron-right",
       target: "QRCode",
+    },
+    {
+      id: 7,
+      icon: "clipboard",
+      label: "Attendance Record",
+      rightIcon: "chevron-right",
+      target: "Attendance",
     },
   ];
 
@@ -187,7 +195,7 @@ const Profile = ({ navigation }) => {
               source={
                 user.image
                   ? { uri: user.image }
-                  : require("../assets/zaid-saleem-image.jpg")
+                  : require("../assets/profile-avatar.jpg")
               }
               style={styles.image}
             />
@@ -206,8 +214,14 @@ const Profile = ({ navigation }) => {
           data={profiles}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => {
-            return user.loginUser === "drivers" &&
-              item.target === "DriverProfile" ? null : (
+            if (user.loginUser === "drivers") {
+              if (item.target === "DriverProfile") return null;
+            }
+            if (user.loginUser === "parent") {
+              if (item.target === "QRCode") return null;
+            }
+
+            return (
               <ListItem
                 key={item.id}
                 icon={item.icon}
@@ -219,10 +233,6 @@ const Profile = ({ navigation }) => {
           }}
           ItemSeparatorComponent={Seperator}
         ></FlatList>
-        <Button
-          onPress={() => sendPushNotification(expoPushToken)}
-          title="Send"
-        />
       </Screen>
       <ImageViewScreen hideModal={hide} imageUri={imageUri} visible={visible} />
     </>

@@ -33,6 +33,7 @@ const StudentProfile = ({ route }) => {
     busNo,
     image,
     institute,
+    onAndOffBoard,
   } = student || {};
   const userDetails = [
     {
@@ -75,7 +76,7 @@ const StudentProfile = ({ route }) => {
                     source={
                       image
                         ? { uri: image }
-                        : require("../../assets/zaid-saleem-image.jpg")
+                        : require("../../assets/student-avatar.jpeg")
                     }
                   />
                 </TouchableOpacity>
@@ -83,6 +84,27 @@ const StudentProfile = ({ route }) => {
                   style={styles.name}
                 >{`${firstname} ${lastname}`}</AppText>
                 <AppText style={styles.address}>{institute}</AppText>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <AppText>Status</AppText>
+                  <View
+                    style={{
+                      marginLeft: 20,
+                      width: 15,
+                      height: 15,
+                      borderRadius: 10,
+                      backgroundColor:
+                        onAndOffBoard === false || onAndOffBoard === undefined
+                          ? colors.danger
+                          : "green",
+                    }}
+                  ></View>
+                </View>
               </View>
               <Seperator />
               <AppText style={styles.heading}>Personal Information</AppText>

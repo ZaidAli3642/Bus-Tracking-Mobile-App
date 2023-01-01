@@ -68,7 +68,7 @@ const BusDetails = ({ route }) => {
                 source={
                   image
                     ? { uri: image }
-                    : require("../assets/zaid-saleem-image.jpg")
+                    : require("../assets/profile-avatar.jpg")
                 }
               />
             </TouchableOpacity>
