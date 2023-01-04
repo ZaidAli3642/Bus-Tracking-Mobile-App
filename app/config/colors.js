@@ -8,4 +8,5 @@ export default {
   veryLightBlack: "#f5f5f5",
   whiteSmoke: "#F8F8F8",
   black: "#000000",
+  mediumLightBlack: "#ededed",
 };

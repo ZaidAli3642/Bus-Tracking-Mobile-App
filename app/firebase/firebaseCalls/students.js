@@ -17,6 +17,7 @@ export const getParentStudents = async (user) => {
   const studentRef = collection(database, "students");
   const q = query(
     studentRef,
+    where("institute", "==", user.institute),
     where("fatherNID", "==", user.nationalIdentityNumber)
   );
   const studentSnapshot = await getDocs(q);

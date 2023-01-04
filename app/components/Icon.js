@@ -6,8 +6,9 @@ const Icon = ({
   name,
   size = 24,
   color = colors.lightBlack,
+  style,
 }) => {
-  return <IconComponent name={name} size={size} color={color} />;
+  return <IconComponent style={style} name={name} size={size} color={color} />;
 };
 
 export default Icon;

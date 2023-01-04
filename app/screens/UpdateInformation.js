@@ -15,7 +15,7 @@ const UpdateInformation = () => {
   const { user, setUser } = useContext(AuthContext);
 
   const uploadImage = async () => {
-    const result = await selectImage();
+    const result = await selectImage(user);
     if (result === undefined)
       return ToastAndroid.show(
         "Error Occured while uploading Image",
@@ -29,7 +29,8 @@ const UpdateInformation = () => {
       image: result,
     };
 
-    const updateResult = await updateData(updatedUser, "parent", user.id);
+    console.log("Login user : ", user);
+    const updateResult = await updateData(updatedUser, user.loginUser, user.id);
 
     if (updateResult === false)
       return ToastAndroid.show("Something went wrong!", ToastAndroid.SHORT);
@@ -43,7 +44,7 @@ const UpdateInformation = () => {
       ...user,
       password: password,
     };
-    const result = await updateData(updatedUser, "parent", user.id);
+    const result = await updateData(updatedUser, user.loginUser, user.id);
     if (result === false)
       return ToastAndroid.show(
         "Error Occured while updating password.",

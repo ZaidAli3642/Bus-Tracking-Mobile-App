@@ -110,7 +110,7 @@ const QRCodeScanner = () => {
       const duration2 = moment.duration(time2.diff(closingTIme));
       const month = moment().month() + 1;
       const year = moment().year();
-
+      const date = moment().format("DD/MM/YYYY");
       console.log("MOnth and year : ", month, year);
 
       const minutes = duration.asMinutes();
@@ -126,10 +126,31 @@ const QRCodeScanner = () => {
           return alert("This is not a closing time now.");
         }
       }
+      const attendanceCollection = collection(database, "attendance");
+      const q = query(
+        attendanceCollection,
+        where("institute", "==", scannedData.institute),
+        where("fatherNID", "==", scannedData.fatherNID),
+        where("date", "==", date)
+      );
+      const attendanceDocs = await getDocs(q);
+
+      const attendance = attendanceDocs.docs.map((attendance) => ({
+        id: attendance.id,
+        ...attendance.data(),
+      }));
+
+      if (attendance[0]?.closingTime?.offBoard) {
+        setLoading(false);
+        return alert(
+          "You cannot mark this student attendance. Wait for tommorow."
+        );
+      }
 
       const docRef = doc(database, "students", scannedData.studentId);
       await updateDoc(docRef, {
         onAndOffBoard,
+        date,
         timeOnAndOffBoard: serverTimestamp(),
       });
 
@@ -146,30 +167,54 @@ const QRCodeScanner = () => {
         fatherNID: student.get("fatherNID"),
         driverName: user.firstname,
         timeAndDate: serverTimestamp(),
+        date,
         month,
         year,
       };
 
-      if (minutes < 0) {
-        attendanceData.openingTime.onBoard = true;
-        attendanceData.openingTime.offBoard = false;
-      }
-      if (minutes > 0) {
-        attendanceData.openingTime.offBoard = true;
-        attendanceData.openingTime.onBoard = false;
-      }
-      if (minutes > 0 && minutes2 > 0) {
-        if (onAndOffBoard) {
-          attendanceData.closingTime.onBoard = true;
-          attendanceData.closingTime.offBoard = false;
-        } else {
-          attendanceData.closingTime.onBoard = false;
-          attendanceData.closingTime.offBoard = true;
+      if (attendance.length === 0) {
+        attendanceData.openingTime.onBoard = moment().format("hh:mm A");
+        await addDoc(attendanceCollection, attendanceData);
+      } else {
+        console.log("Attendance : ", attendance);
+        const attendanceData = {
+          ...attendance[0],
+        };
+        if (!attendance[0]?.openingTime?.offBoard) {
+          attendanceData.openingTime.offBoard = moment().format("hh:mm A");
+        } else if (!attendance[0]?.closingTime?.onBoard) {
+          attendanceData.closingTime.onBoard = moment().format("hh:mm A");
+        } else if (!attendance[0]?.closingTime?.offBoard) {
+          attendanceData.closingTime.offBoard = moment().format("hh:mm A");
         }
+
+        const docRef = doc(database, "attendance", attendance[0].id);
+        await updateDoc(docRef, { ...attendanceData });
       }
 
-      const attendanceCollection = collection(database, "attendance");
-      await addDoc(attendanceCollection, attendanceData);
+      // if (minutes < 0) {
+      //   console.log("Minutes : ", minutes);
+      //   attendanceData.openingTime.onBoard = true;
+      //   attendanceData.openingTime.offBoard = false;
+      // }
+      // if (minutes > 0) {
+      //   attendanceData.openingTime.offBoard = true;
+      //   attendanceData.openingTime.onBoard = false;
+      // }
+      // if (minutes > 0 && minutes2 > 0) {
+      //   if (onAndOffBoard) {
+      //     attendanceData.closingTime.onBoard = true;
+      //     attendanceData.closingTime.offBoard = false;
+      //   } else {
+      //     attendanceData.closingTime.onBoard = false;
+      //     attendanceData.closingTime.offBoard = true;
+      //   }
+      // }
+      console.log("attendance : ", attendanceData);
+
+      if (attendance.length === 0) {
+      } else {
+      }
 
       const message = onAndOffBoard
         ? `${scannedData.rollNo} is on-Boarded.`
@@ -186,6 +231,7 @@ const QRCodeScanner = () => {
         );
       }
     } catch (error) {
+      setLoading(false);
       alert("Something went wrong while scanning QR");
       console.log("ERROR SCANNING BAR CODE :", error);
     }

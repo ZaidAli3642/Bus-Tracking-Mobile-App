@@ -23,11 +23,14 @@ export const getSpecificParent = async (user) => {
   return parent;
 };
 
-export const uploadProfileImage = async (image) => {
+export const uploadProfileImage = async (image, user) => {
   try {
+    let collectionName = "parent/";
+
+    if (user.loginUser === "drivers") collectionName = "drivers/";
     const imageName = new Date().valueOf();
 
-    const imageRef = ref(storage, "parent/" + imageName);
+    const imageRef = ref(storage, collectionName + imageName);
 
     const response = await fetch(image.uri);
     const blob = await response.blob();
@@ -43,7 +46,7 @@ export const uploadProfileImage = async (image) => {
   }
 };
 
-export const selectImage = async () => {
+export const selectImage = async (user) => {
   const permission = await ImagePicker.getMediaLibraryPermissionsAsync();
 
   if (permission.granted === false) {
@@ -59,7 +62,7 @@ export const selectImage = async () => {
 
   if (result.cancelled) return;
 
-  const uploadResult = await uploadProfileImage(result);
+  const uploadResult = await uploadProfileImage(result, user);
 
   if (uploadBytes === false) return;
 
