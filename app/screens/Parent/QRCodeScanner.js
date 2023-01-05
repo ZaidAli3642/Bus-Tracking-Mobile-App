@@ -1,4 +1,4 @@
-import { Button, StyleSheet, ActivityIndicator } from "react-native";
+import { Button, StyleSheet, ActivityIndicator, View } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import moment from "moment";
@@ -273,7 +273,18 @@ const QRCodeScanner = () => {
         style={StyleSheet.absoluteFillObject}
       />
       {scanned && (
-        <Button title={"Tap to Scan Again"} onPress={() => setScanned(false)} />
+        <View
+          style={{
+            position: "absolute",
+            bottom: 0,
+            width: "100%",
+          }}
+        >
+          <Button
+            title={"Tap to Scan Again"}
+            onPress={() => setScanned(false)}
+          />
+        </View>
       )}
     </>
   );
