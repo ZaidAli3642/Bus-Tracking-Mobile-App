@@ -211,9 +211,13 @@ const AttendanceTable = ({ sidebar: sideBar, setSidebar }) => {
               <List.Item
                 style={{ borderBottomColor: "white", borderBottomWidth: 1 }}
                 title={"School Opening(ON/OFF) Board"}
-                description={`${students?.openingTime?.onBoard || "none"} - ${
-                  students?.openingTime?.offBoard || "none"
-                }`}
+                description={
+                  students?.openingTime?.onBoard.includes("0:00")
+                    ? "A"
+                    : `${students?.openingTime?.onBoard || "none"} - ${
+                        students?.openingTime?.offBoard || "none"
+                      }`
+                }
                 left={(props) => (
                   <List.Icon {...props} icon="clock-time-four-outline" />
                 )}
@@ -221,9 +225,13 @@ const AttendanceTable = ({ sidebar: sideBar, setSidebar }) => {
               <List.Item
                 style={{ borderBottomColor: "white", borderBottomWidth: 1 }}
                 title={"School Closing(ON/OFF) Board"}
-                description={`${students?.closingTime?.onBoard || "none"} - ${
-                  students?.closingTime?.offBoard || "none"
-                }`}
+                description={
+                  students?.openingTime?.onBoard.includes("0:00")
+                    ? "A"
+                    : `${students?.closingTime?.onBoard || "none"} - ${
+                        students?.closingTime?.offBoard || "none"
+                      }`
+                }
                 left={(props) => (
                   <List.Icon {...props} icon="clock-time-four-outline" />
                 )}

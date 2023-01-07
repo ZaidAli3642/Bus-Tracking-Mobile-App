@@ -168,7 +168,7 @@ const QRCodeScanner = () => {
         driverName: user.firstname,
         timeAndDate: serverTimestamp(),
         date,
-        month,
+        month: String(month),
         year,
       };
 
