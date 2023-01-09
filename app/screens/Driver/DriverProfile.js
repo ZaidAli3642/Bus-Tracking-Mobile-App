@@ -94,18 +94,18 @@ const DriverProfile = ({ navigation, user, setUser }) => {
       icon: "bus",
       label: "Bus No",
     },
-    {
-      id: 10,
-      info: driverDutyTime,
-      icon: "clock-time-four-outline",
-      label: "Duty Time Start",
-    },
-    {
-      id: 11,
-      info: driverDutyEnd,
-      icon: "clock-time-four-outline",
-      label: "Duty Time End",
-    },
+    // {
+    //   id: 10,
+    //   info: driverDutyTime,
+    //   icon: "clock-time-four-outline",
+    //   label: "Duty Time Start",
+    // },
+    // {
+    //   id: 11,
+    //   info: driverDutyEnd,
+    //   icon: "clock-time-four-outline",
+    //   label: "Duty Time End",
+    // },
     {
       id: 12,
       info: postalcode,

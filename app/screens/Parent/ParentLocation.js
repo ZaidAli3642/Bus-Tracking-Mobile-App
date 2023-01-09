@@ -69,21 +69,23 @@ const ParentLocation = () => {
       where("institute", "==", user.institute),
       where("busNo", "==", user.busNo)
     );
+    console.log("User name : ", user);
     onSnapshot(q, (driverSnapshot) => {
       const driverLocation = driverSnapshot.docs.map((driverLocation) => ({
         id: driverLocation,
         ...driverLocation.data(),
       }));
-      setCurrentLocation(
-        new AnimatedRegion({
-          latitude: driverLocation[0].latitude,
-          longitude: driverLocation[0].longitude,
-          latitudeDelta: 1,
-          longitudeDelta: 1,
-        })
-      );
-
       console.log("Driver Location : ", driverLocation);
+      if (driverLocation.length > 0) {
+        setCurrentLocation(
+          new AnimatedRegion({
+            latitude: driverLocation[0].latitude,
+            longitude: driverLocation[0].longitude,
+            latitudeDelta: 1,
+            longitudeDelta: 1,
+          })
+        );
+      }
     });
   };
 

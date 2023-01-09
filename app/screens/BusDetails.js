@@ -39,7 +39,7 @@ const BusDetails = ({ route }) => {
     { id: 1, info: busNo, label: "Bus No" },
     { id: 2, info: institute, label: "Institute" },
     { id: 3, info: licenseNo, label: "License No" },
-    { id: 4, info: maintainance, label: "Maintainance" },
+    // { id: 4, info: maintainance, label: "Maintainance" },
     { id: 5, info: seatCapacity, label: "Seat Capacity" },
   ];
 
