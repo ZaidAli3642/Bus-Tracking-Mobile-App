@@ -116,6 +116,10 @@ const QRCodeScanner = () => {
       const minutes = duration.asMinutes();
       const minutes2 = duration2.asMinutes();
 
+      console.log("On and off board opening time: ", minutes);
+      console.log("On and off board closing time: ", minutes2);
+      console.log("On and off board : ", onAndOffBoard);
+
       if (!onAndOffBoard && minutes < 0) {
         setLoading(false);
         return alert(`${scannedData.rollNo} cannot be off boarded now.`);
